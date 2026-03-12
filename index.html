@@ -161,6 +161,20 @@
       return EXAM_DATA.find(q => q.id === parseInt(id));
     }
 
+    function getPlaceholderText() {
+      if (state.modeType === 'reading') {
+        // Deep Reading 모드
+        return state.teacherMode === 'native'
+          ? 'Ask anything...'
+          : '궁금한 점을 물어보세요!';
+      } else {
+        // Discussion 모드
+        return state.teacherMode === 'native'
+          ? 'Type your answer here...'
+          : '여기에 답변을 입력하세요...';
+      }
+    }
+
     // ==================== API ====================
     async function callChatAPI(questionId, teacherMode, modeType, messages, initialContext, isFollowUp = false) {
       const question = getQuestion(questionId);
@@ -296,7 +310,7 @@
                   <span class="bg-green-100 text-green-700 w-6 h-6 rounded-full flex items-center justify-center text-xs">1</span>
                   글의 전반적인 내용 이해 (한국어)
                 </label>
-                <textarea id="koreanInput" class="w-full h-32 p-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all shadow-sm break-words whitespace-pre-wrap" placeholder="이 지문은 어떤 상황이고, 필자는 무엇을 주장하고 있나요?"></textarea>
+                <textarea id="koreanInput" class="w-full h-32 p-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all shadow-sm break-words whitespace-pre-wrap" placeholder="이 지문은 어떤 이야기를 담고 있나요?"></textarea>
               </div>
 
               <!-- English Input -->
@@ -427,7 +441,7 @@
               <input
                 type="text"
                 id="chatInput"
-                placeholder="${state.teacherMode === 'native' ? 'Ask anything...' : '궁금한 점을 물어보세요!'}"
+                placeholder="${getPlaceholderText()}"
                 ${state.isLoading ? 'disabled' : ''}
                 class="w-full bg-gray-100 text-gray-900 placeholder-gray-400 border-0 rounded-full py-3 pl-5 pr-14 focus:ring-2 focus:ring-green-500 focus:bg-white transition-all shadow-inner"
               />
