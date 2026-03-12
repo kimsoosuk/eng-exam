@@ -65,28 +65,6 @@
     const API_URL = 'https://eng-exam.kimsoosuk1.workers.dev';
     const LOGO_URL = 'https://res.cloudinary.com/dms5vyofw/image/upload/v1767169336/%E1%84%80%E1%85%B5%E1%86%B7%E1%84%89%E1%85%AE%E1%84%89%E1%85%A5%E1%86%A8%E1%84%8B%E1%85%A1%E1%84%8B%E1%85%B5%E1%84%8F%E1%85%A9%E1%86%AB_%E1%84%85%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%AB_%E1%84%8F%E1%85%A5%E1%86%AF%E1%84%85%E1%85%A53_sh39nc.png';
 
-    // 이미지 로드 상태 추적
-    let logoLoaded = false;
-    let logoError = false;
-
-    // 이미지 미리 로드
-    const logoImg = new Image();
-    logoImg.onload = function () {
-      logoLoaded = true;
-      logoError = false;
-      // 이미 렌더링된 아바타 이미지들 업데이트
-      document.querySelectorAll('.avatar-container img').forEach(img => {
-        img.src = LOGO_URL;
-        img.style.display = 'block';
-        if (img.nextElementSibling) img.nextElementSibling.style.display = 'none';
-      });
-    };
-    logoImg.onerror = function () {
-      logoLoaded = false;
-      logoError = true;
-    };
-    logoImg.src = LOGO_URL;
-
     // ==================== EXAM DATA ====================
     const PASSAGE_41_42 = `Some researchers view spoken languages as incomplete devices for capturing precise differences. They think numbers represent the most neutral language of description. However, when our language of description is changed to numbers, we do not move toward greater (a) accuracy . Numbers are no more 'appropriate pictures of the world' than words, music, or painting. While useful for specific purposes (e.g. census taking, income distribution), they (b) include information of enormous value. For example, the future lives of young students are tied to their scores on national tests. In effect, whether they can continue with their education, where, and at what cost depends importantly on a handful of numbers. These numbers do not account for the (c) quality of schools they have attended, whether they have been tutored, have supportive parents, have test anxiety, and so on. Finally, putting aside the many ways in which statistical results can be manipulated, there are ways in which turning people's lives into numbers is (d) morally insulating . Statistics on crime, homelessness, or the spread of a disease say nothing of people's suffering. We read the statistics as reports on events at a distance, thus allowing us to (e) escape without being disturbed. Statistics are human beings with the tears wiped off. Quantify with caution.`;
 
@@ -344,19 +322,15 @@
       const isUser = msg.role === 'user';
       const safeText = typeof msg.text === 'string' ? msg.text : '';
 
-      // 선생님 아바타: 이미지 로드 상태에 따라 표시
-      const showImage = logoLoaded && !logoError;
+      // 선생님 아바타: 이미지 우선, 에러 시 fallback
       const teacherAvatar = `
-        <div class="avatar-container w-10 h-10 rounded-full flex-shrink-0 shadow-lg ring-2 ring-white overflow-hidden bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
+        <div class="w-10 h-10 rounded-full flex-shrink-0 shadow-lg ring-2 ring-white overflow-hidden bg-white">
           <img 
             src="${LOGO_URL}" 
             alt="Teacher" 
             class="w-full h-full object-cover"
-            style="display: ${showImage ? 'block' : 'none'};"
-            onload="this.style.display='block'; if(this.nextElementSibling) this.nextElementSibling.style.display='none';"
-            onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';"
+            onerror="this.onerror=null; this.parentElement.style.background='linear-gradient(135deg, #22c55e, #10b981)'; this.parentElement.innerHTML='<span style=\\'color:white;display:flex;align-items:center;justify-content:center;width:100%;height:100%;\\'>✨</span>';"
           >
-          <span class="text-white fallback-icon flex items-center justify-center" style="display: ${showImage ? 'none' : 'flex'};">${Icons.sparkles}</span>
         </div>
       `;
 
@@ -396,17 +370,19 @@
       const messagesHtml = state.messages.map(msg => renderChatMessage(msg)).join('');
 
       const loadingHtml = state.isLoading && state.messages.length === 0
-        ? `<div class="flex flex-col items-center justify-center h-full text-gray-400 gap-4 animate-pulse">
-             <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center"><span class="text-green-400">${Icons.brain}</span></div>
-             <p class="text-sm font-medium">선생님이 내용을 분석 중입니다...</p>
+        ? `<div class="flex flex-col items-center justify-center h-full text-gray-400 gap-4">
+             <div class="w-20 h-20 rounded-full bg-white shadow-lg flex items-center justify-center overflow-hidden ring-4 ring-green-100">
+               <img src="${LOGO_URL}" alt="Teacher" class="w-full h-full object-cover animate-pulse" onerror="this.style.display='none';">
+             </div>
+             <p class="text-sm font-medium animate-pulse">선생님이 내용을 분석 중입니다...</p>
            </div>`
         : '';
 
       const typingIndicator = state.isLoading && state.messages.length > 0
         ? `<div class="flex w-full mb-6 justify-start animate-fadeIn">
              <div class="flex items-center gap-3">
-               <div class="w-10 h-10 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex-shrink-0 flex items-center justify-center">
-                 <span class="text-white animate-pulse">${Icons.sparkles}</span>
+               <div class="w-10 h-10 rounded-full flex-shrink-0 overflow-hidden bg-white shadow-lg ring-2 ring-white">
+                 <img src="${LOGO_URL}" alt="Teacher" class="w-full h-full object-cover animate-pulse" onerror="this.style.display='none';">
                </div>
                <div class="h-10 bg-white border border-gray-100 rounded-2xl w-24 flex items-center justify-center shadow-sm">
                  <span class="text-gray-400 animate-pulse">${Icons.dots}</span>
