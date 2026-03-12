@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,15 +10,53 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    * { font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif; }
-    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-    .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
-    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
-    .animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-    .scrollbar-hide::-webkit-scrollbar { display: none; }
-    .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+    * {
+      font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .animate-fadeIn {
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: 0.5;
+      }
+    }
+
+    .animate-pulse {
+      animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+
+    .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+    }
+
+    .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
   </style>
 </head>
+
 <body class="bg-gray-50 min-h-screen">
   <div id="app"></div>
 
@@ -25,6 +64,28 @@
     // ==================== CONFIG ====================
     const API_URL = 'https://eng-exam.kimsoosuk1.workers.dev';
     const LOGO_URL = 'https://res.cloudinary.com/dms5vyofw/image/upload/v1767169336/%E1%84%80%E1%85%B5%E1%86%B7%E1%84%89%E1%85%AE%E1%84%89%E1%85%A5%E1%86%A8%E1%84%8B%E1%85%A1%E1%84%8B%E1%85%B5%E1%84%8F%E1%85%A9%E1%86%AB_%E1%84%85%E1%85%A1%E1%84%8B%E1%85%B5%E1%86%AB_%E1%84%8F%E1%85%A5%E1%86%AF%E1%84%85%E1%85%A53_sh39nc.png';
+
+    // 이미지 로드 상태 추적
+    let logoLoaded = false;
+    let logoError = false;
+
+    // 이미지 미리 로드
+    const logoImg = new Image();
+    logoImg.onload = function () {
+      logoLoaded = true;
+      logoError = false;
+      // 이미 렌더링된 아바타 이미지들 업데이트
+      document.querySelectorAll('.avatar-container img').forEach(img => {
+        img.src = LOGO_URL;
+        img.style.display = 'block';
+        if (img.nextElementSibling) img.nextElementSibling.style.display = 'none';
+      });
+    };
+    logoImg.onerror = function () {
+      logoLoaded = false;
+      logoError = true;
+    };
+    logoImg.src = LOGO_URL;
 
     // ==================== EXAM DATA ====================
     const PASSAGE_41_42 = `Some researchers view spoken languages as incomplete devices for capturing precise differences. They think numbers represent the most neutral language of description. However, when our language of description is changed to numbers, we do not move toward greater (a) accuracy . Numbers are no more 'appropriate pictures of the world' than words, music, or painting. While useful for specific purposes (e.g. census taking, income distribution), they (b) include information of enormous value. For example, the future lives of young students are tied to their scores on national tests. In effect, whether they can continue with their education, where, and at what cost depends importantly on a handful of numbers. These numbers do not account for the (c) quality of schools they have attended, whether they have been tutored, have supportive parents, have test anxiety, and so on. Finally, putting aside the many ways in which statistical results can be manipulated, there are ways in which turning people's lives into numbers is (d) morally insulating . Statistics on crime, homelessness, or the spread of a disease say nothing of people's suffering. We read the statistics as reports on events at a distance, thus allowing us to (e) escape without being disturbed. Statistics are human beings with the tears wiped off. Quantify with caution.`;
@@ -100,7 +161,7 @@
       if (!text || typeof text !== 'string') return '';
       const lines = text.split('\n');
       let html = '';
-      
+
       for (const line of lines) {
         const trimmed = line.trim();
         if (trimmed.startsWith('###')) {
@@ -123,9 +184,9 @@
     }
 
     // ==================== API ====================
-    async function callChatAPI(questionId, teacherMode, modeType, messages, initialContext) {
+    async function callChatAPI(questionId, teacherMode, modeType, messages, initialContext, isFollowUp = false) {
       const question = getQuestion(questionId);
-      
+
       try {
         const response = await fetch(`${API_URL}/api/chat`, {
           method: 'POST',
@@ -136,6 +197,7 @@
             modeType,
             messages,
             initialContext,
+            isFollowUp, // 후속 대화인지 여부
             question: {
               content: question.content,
               options: question.options,
@@ -145,7 +207,7 @@
         });
 
         const data = await response.json();
-        
+
         if (!response.ok || data.error) {
           throw new Error(data.error || 'API request failed');
         }
@@ -159,7 +221,7 @@
 
     // ==================== RENDER FUNCTIONS ====================
     function renderHomeScreen() {
-      const optionsHtml = EXAM_DATA.map(q => 
+      const optionsHtml = EXAM_DATA.map(q =>
         `<option value="${q.id}" ${q.id === state.selectedId ? 'selected' : ''}>${q.id}번 - ${q.category.split(' (')[0]}</option>`
       ).join('');
 
@@ -225,7 +287,7 @@
 
     function renderEssayInputScreen() {
       const question = getQuestion(state.selectedId);
-      
+
       return `
         <div class="flex flex-col h-screen bg-gray-50 overflow-hidden">
           <!-- Header -->
@@ -281,29 +343,46 @@
     function renderChatMessage(msg) {
       const isUser = msg.role === 'user';
       const safeText = typeof msg.text === 'string' ? msg.text : '';
-      
+
+      // 선생님 아바타: 이미지 로드 상태에 따라 표시
+      const showImage = logoLoaded && !logoError;
+      const teacherAvatar = `
+        <div class="avatar-container w-10 h-10 rounded-full flex-shrink-0 shadow-lg ring-2 ring-white overflow-hidden bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
+          <img 
+            src="${LOGO_URL}" 
+            alt="Teacher" 
+            class="w-full h-full object-cover"
+            style="display: ${showImage ? 'block' : 'none'};"
+            onload="this.style.display='block'; if(this.nextElementSibling) this.nextElementSibling.style.display='none';"
+            onerror="this.style.display='none'; if(this.nextElementSibling) this.nextElementSibling.style.display='flex';"
+          >
+          <span class="text-white fallback-icon flex items-center justify-center" style="display: ${showImage ? 'none' : 'flex'};">${Icons.sparkles}</span>
+        </div>
+      `;
+
+      // 학생 아바타
+      const studentAvatar = `
+        <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg ring-2 ring-white bg-green-600">
+          <span class="text-white">${Icons.graduationCap}</span>
+        </div>
+      `;
+
       return `
         <div class="flex w-full mb-6 ${isUser ? 'justify-end' : 'justify-start'} animate-fadeIn">
           <div class="flex flex-col max-w-[95%] md:max-w-[85%] ${isUser ? 'items-end' : 'items-start'}">
             <div class="flex ${isUser ? 'flex-row-reverse' : 'flex-row'} items-start gap-2 md:gap-3">
-              <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg ring-2 ring-white overflow-hidden ${isUser ? 'bg-green-600' : 'bg-white border border-green-100'}">
-                ${isUser 
-                  ? `<span class="text-white">${Icons.graduationCap}</span>` 
-                  : `<img src="${LOGO_URL}" alt="Teacher" class="w-full h-full object-cover" onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\\'text-green-400\\'>${Icons.sparkles}</span>';">`
-                }
-              </div>
+              ${isUser ? studentAvatar : teacherAvatar}
               
-              <div class="p-3.5 md:p-5 rounded-2xl shadow-md break-words ${
-                isUser 
-                  ? 'bg-green-600 text-white rounded-tr-none' 
-                  : msg.isError 
-                    ? 'bg-red-50 text-red-600 border border-red-200 rounded-tl-none'
-                    : 'bg-white text-gray-800 border border-gray-100 rounded-tl-none'
-              }">
-                ${isUser 
-                  ? `<div class="whitespace-pre-wrap leading-relaxed text-sm md:text-base">${escapeHtml(safeText)}</div>`
-                  : `<div class="font-sans text-sm md:text-base">${renderFormattedText(safeText)}</div>`
-                }
+              <div class="p-3.5 md:p-5 rounded-2xl shadow-md break-words ${isUser
+          ? 'bg-green-600 text-white rounded-tr-none'
+          : msg.isError
+            ? 'bg-red-50 text-red-600 border border-red-200 rounded-tl-none'
+            : 'bg-white text-gray-800 border border-gray-100 rounded-tl-none'
+        }">
+                ${isUser
+          ? `<div class="whitespace-pre-wrap leading-relaxed text-sm md:text-base">${escapeHtml(safeText)}</div>`
+          : `<div class="font-sans text-sm md:text-base">${renderFormattedText(safeText)}</div>`
+        }
               </div>
             </div>
           </div>
@@ -313,16 +392,16 @@
 
     function renderChatScreen() {
       const question = getQuestion(state.selectedId);
-      
+
       const messagesHtml = state.messages.map(msg => renderChatMessage(msg)).join('');
-      
-      const loadingHtml = state.isLoading && state.messages.length === 0 
+
+      const loadingHtml = state.isLoading && state.messages.length === 0
         ? `<div class="flex flex-col items-center justify-center h-full text-gray-400 gap-4 animate-pulse">
              <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center"><span class="text-green-400">${Icons.brain}</span></div>
              <p class="text-sm font-medium">선생님이 내용을 분석 중입니다...</p>
            </div>`
         : '';
-      
+
       const typingIndicator = state.isLoading && state.messages.length > 0
         ? `<div class="flex w-full mb-6 justify-start animate-fadeIn">
              <div class="flex items-center gap-3">
@@ -461,7 +540,7 @@
     async function sendMessage() {
       const chatInput = document.getElementById('chatInput');
       const text = chatInput.value.trim();
-      
+
       if (!text || state.isLoading) return;
 
       chatInput.value = '';
@@ -470,12 +549,14 @@
       render();
 
       try {
+        // 전체 대화 이력 전송 (새 사용자 메시지 포함)
         const response = await callChatAPI(
           state.selectedId,
           state.teacherMode,
           state.modeType,
-          state.messages.slice(0, -1), // Exclude the just-added user message
-          null // No initial context for follow-up messages
+          state.messages, // 전체 메시지 전송
+          null, // No initial context for follow-up messages
+          true  // isFollowUp flag
         );
 
         state.messages.push({ role: 'model', text: response });
@@ -497,7 +578,8 @@
           state.teacherMode,
           state.modeType,
           [],
-          state.essayInputs
+          state.essayInputs,
+          false // isFollowUp flag - 초기 세션
         );
 
         state.messages.push({ role: 'model', text: response });
@@ -519,7 +601,7 @@
     // ==================== MAIN RENDER ====================
     function render() {
       const app = document.getElementById('app');
-      
+
       switch (state.view) {
         case 'home':
           app.innerHTML = renderHomeScreen();
@@ -540,4 +622,5 @@
     render();
   </script>
 </body>
+
 </html>
