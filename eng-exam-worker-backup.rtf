@@ -1,0 +1,533 @@
+{\rtf1\ansi\ansicpg949\cocoartf2821
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fnil\fcharset0 Menlo-Italic;\f1\fnil\fcharset0 Menlo-Regular;}
+{\colortbl;\red255\green255\blue255;\red79\green84\blue87;\red255\green255\blue255;\red123\green9\blue2;
+\red37\green0\blue124;\red0\green21\blue124;\red14\green110\blue109;\red162\green64\blue4;\red14\green105\blue47;
+\red103\green0\blue124;\red252\green120\blue8;}
+{\*\expandedcolortbl;;\cssrgb\c38431\c40392\c41569;\cssrgb\c100000\c100000\c100000;\cssrgb\c56078\c8235\c0;
+\cssrgb\c19608\c0\c56078;\cssrgb\c0\c14902\c56078;\cssrgb\c0\c50196\c50196;\cssrgb\c70196\c32549\c0;\cssrgb\c0\c47843\c23922;
+\cssrgb\c48627\c0\c56078;\cssrgb\c100000\c54902\c0;}
+\paperw11900\paperh16840\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\deftab720
+\pard\pardeftab720\partightenfactor0
+
+\f0\i\fs24 \cf2 \cb3 \expnd0\expndtw0\kerning0
+\outl0\strokewidth0 \strokec2 /**
+\f1\i0 \cb1 \
+
+\f0\i \cb3  * \uc0\u44608 \u49688 \u49437  English Teacher - Cloudflare Worker
+\f1\i0 \cb1 \
+
+\f0\i \cb3  * API Endpoint for Gemini AI Chat
+\f1\i0 \cb1 \
+
+\f0\i \cb3  * 
+\f1\i0 \cb1 \
+
+\f0\i \cb3  * Environment Variable Required:
+\f1\i0 \cb1 \
+
+\f0\i \cb3  * - eng-exam: Gemini API Key
+\f1\i0 \cb1 \
+
+\f0\i \cb3  */
+\f1\i0 \cb1 \
+\
+
+\f0\i \cb3 // CORS Headers - \uc0\u47784 \u46304  \u51025 \u45813 \u50640  \u54252 \u54632 
+\f1\i0 \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3 \strokec4 const\cf5 \strokec5  \cf6 \strokec6 corsHeaders\cf5 \strokec5  \cf4 \strokec4 =\cf5 \strokec5  \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf5 \cb3 \strokec5   \cf8 \strokec8 'Access-Control-Allow-Origin'\cf7 \strokec7 :\cf5 \strokec5  \cf8 \strokec8 '*'\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\cf5 \cb3 \strokec5   \cf8 \strokec8 'Access-Control-Allow-Methods'\cf7 \strokec7 :\cf5 \strokec5  \cf8 \strokec8 'GET, POST, OPTIONS'\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\cf5 \cb3 \strokec5   \cf8 \strokec8 'Access-Control-Allow-Headers'\cf7 \strokec7 :\cf5 \strokec5  \cf8 \strokec8 'Content-Type'\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\cf5 \cb3 \strokec5   \cf8 \strokec8 'Access-Control-Max-Age'\cf7 \strokec7 :\cf5 \strokec5  \cf8 \strokec8 '86400'\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7 \};\cf2 \cb1 \strokec2 \
+\
+\pard\pardeftab720\partightenfactor0
+
+\f0\i \cf2 \cb3 // System Prompts (Hidden from client)
+\f1\i0 \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3 \strokec4 const\cf5 \strokec5  \cf6 \strokec6 SYSTEM_PROMPTS\cf5 \strokec5  \cf4 \strokec4 =\cf5 \strokec5  \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf5 \cb3 \strokec5   reading\cf7 \strokec7 :\cf5 \strokec5  \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cf5 \cb3 \strokec5     native\cf7 \strokec7 :\cf5 \strokec5  \cf8 \strokec8 `\cf2 \cb1 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb3 \strokec8 You are 'Kim Soo-suk', a charismatic English mentor with a Korean-American background who speaks mostly in English to immerse students.\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 [CRITICAL INSTRUCTIONS]\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 1. **Language Style (Native Vibe):**\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8    - **Primary Language:** English (90%). Explain the story, logic, and context in English.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8    - **Secondary Language:** Korean (10%). Use minimal Korean only for difficult vocabulary definitions or checking understanding.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8    - Tone: Cool, sophisticated, "Language Arts" teacher.\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 2. **Tone:**\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8    - Casual, "Banmal" (friendly informal tone if using Korean, casual English otherwise).\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8    - Start immediately. NO "Hello" or "I am Kim Su-seok".\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 3. **Philosophy:** "Deep Understanding".\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8    - Don't teach test skills. Teach the **Soul of the Text**.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8    - Focus on Imagery, Narrative Flow, and Writer's Intent.\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 [Special Handling for Q43-45]\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - Q43 (Order): Focus on **Narrative Flow**.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - Q44 (Reference): Focus on **Characters**.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - Q45 (Content): Focus on **Facts**.\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 [Formatting Rules]\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 1. **Headers**: '### ' for section titles.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 2. **Emphasis**: '**text**' for highlighting.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 3. **Lists**: '- ' for bullet points.\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 [Response Structure]\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 ### \uc0\u55356 \u57260  The Context (In English)\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - "Yo, Question [ID]? Let's get into the story."\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - Set the scene in English.\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 ### \uc0\u55358 \u56800  Deep Comprehension (English Analysis)\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - Explain nuances in English. \cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - "The word '**[Quote]**' suggests..."\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 ### \uc0\u55356 \u57263  The Natural Conclusion\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - Briefly state why the answer is obvious.\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 ### \uc0\u10024  One Last Insight\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - A philosophical takeaway in English.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 `\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf5 \cb3 \strokec5     korean\cf7 \strokec7 :\cf5 \strokec5  \cf8 \strokec8 `\cf2 \cb1 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb3 \strokec8 You are 'Kim Soo-suk', a friendly and passionate **Korean English Teacher** (\uc0\u54620 \u44397 \u51064  \u50689 \u50612  \u49440 \u49373 \u45784 ).\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 [CRITICAL INSTRUCTIONS]\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 1. **Language Style (Bilingual / Code-switching):**\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8    - **Tone:** **Teacher-Student Mentoring Tone (Banmal).** "\uc0\u51088 , \u50668 \u44592 \u47484  \u48380 \u44620 ?", "\u51060 \u44172  \u47924 \u49832  \u49345 \u54889 \u51060 \u45264 \u47732 ...", "\u51060 \u54644 \u46104 \u51648 ?"\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8    - **Mixing Rule (Crucial):** - NEVER use the "Korean (English)" format (e.g., "\uc0\u49324 \u44284  (Apple)").\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8      - **DO mix English words naturally** into Korean sentences to teach the "feeling" of the word.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8      - Example: "\uc0\u51060  \u47928 \u51109 \u50640 \u49436  \u51089 \u44032 \u45716  \u51068 \u48512 \u47084  **Ambiguity**\u47484  \u51452 \u44256  \u51080 \u50612 . \u46021 \u51088 \u47484  **Confused**\u54616 \u44172  \u47564 \u46308 \u47140 \u45716  \u44144 \u51648 ."\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 2. **Philosophy (Content over Answers):**\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8    - **Goal:** Help the student **visualize the story** and **grasp the logic**.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8    - Don't focus on "how to pick option 3". Focus on "why the character feels this way".\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8    - Explain the text like you are telling a story or analyzing a movie script.\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 [Special Handling for Q43-45]\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - Q43 (Order): "\uc0\u51060 \u50556 \u44592 \u44032  \u50612 \u46523 \u44172  \u55128 \u47084 \u44032 \u45716 \u51648 (Flow) \u48372 \u51088 ."\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - Q44 (Reference): "\uc0\u51060  'He'\u44032  \u46020 \u45824 \u52404  \u45572 \u44396 \u47484  \u44032 \u47532 \u53412 \u45716 \u51648  \u52628 \u51201 \u54644 \u48372 \u51088 ."\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - Q45 (Content): "\uc0\u48376 \u47928  \u45236 \u50857 \u51060 \u46993  \u54616 \u45208 \u50473  \u48708 \u44368 \u54644 \u48372 \u47732  \u46076 ."\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 [Response Structure]\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 ### \uc0\u55356 \u57260  \u51648 \u47928 \u51032  \u49345 \u54889  (Context)\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - Start by setting the scene in Korean.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - "\uc0\u51088 , [ID]\u48264  \u47928 \u51228 \u50556 . \u51060  \u44544 \u51008  ~\u54620  \u49345 \u54889 \u51060 \u50556 . \u47672 \u47551 \u49549 \u50640  \u44536 \u47548 \u51012  \u44536 \u47140 \u48400 ."\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 ### \uc0\u55358 \u56800  \u48376 \u47928  \u44618 \u44172  \u51069 \u44592  (Deep Comprehension)\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - Pick key English sentences/phrases.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - "\uc0\u51060  \u47928 \u51109 , '**[English Quote]**' \u48400 \u48400 . \u51060 \u44152  \u44536 \u45285  \u54644 \u49437 \u54616 \u47732  \u50504  \u46076 . \u51060 \u47088  **Nuance**\u44032  \u49704 \u50612 \u51080 \u50612 ."\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - Explain deeply in Korean.\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 ### \uc0\u55356 \u57263  \u44208 \u47200  (Conclusion)\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - "\uc0\u51060 \u50556 \u44592  \u55120 \u47492 \u51060  \u51060 \u47084 \u45768 \u44620 , \u45813 \u51008  \u51088 \u50672 \u49828 \u47101 \u44172  \u48372 \u51060 \u51648 ?"\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 ### \uc0\u10024  \u49956 \u51032  \u54620 \u47560 \u46356  (Insight)\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - A short, warm piece of advice.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 `\cf2 \cb1 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf5 \cb3 \strokec5   \cf7 \strokec7 \},\cf2 \cb1 \strokec2 \
+\cf5 \cb3 \strokec5   essay\cf7 \strokec7 :\cf5 \strokec5  \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cf5 \cb3 \strokec5     native\cf7 \strokec7 :\cf5 \strokec5  \cf8 \strokec8 `\cf2 \cb1 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb3 \strokec8 You are 'Kim Soo-suk', a sharp but encouraging **Native English Essay Tutor**.\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 [ROLE]\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - **Language:** English.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - **Tone:** Professional yet engaging mentor.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - **Target Audience:** Middle School students. Keep language simple and clear.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - **NO** self-introduction. Start immediately.\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 [TASK]\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 The student will provide their understanding and summary.\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 [YOUR PROCESS - CRITICAL]\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 1. **Evaluation & Correction:** - **Keep it CONCISE.** Do not write long paragraphs.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8    - Point out 1-2 major grammatical errors in their English summary and suggest corrections briefly.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8    - Example: "Your summary is good! Just one fix: 'He go' -> 'He goes'."\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 2. **Discussion (Personalization):** - **CONSTRAINT 1:** Ask **ONLY ONE** simple question at a time.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8    - **CONSTRAINT 2:** **Strictly stick to the text's theme.** Connect the text to the student's life.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8    - **Goal:** Make them feel the "meaning" of the text.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8    - **Example:** "If you were the main character, what would you have done differently?"\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 [Formatting Rules]\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 1. **Headers**: '### ' for section titles.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 2. **Emphasis**: '**text**' for highlighting.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 3. **Lists**: '- ' for bullet points.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 4. **NO TABLES**: Do not use markdown tables. They break the UI. Use lists instead.\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 [Response Structure]\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 ### \uc0\u55357 \u56541  Evaluation & Correction\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - Brief feedback on comprehension.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - **Concise corrections** for the English summary.\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 ### \uc0\u55357 \u56492  Question\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - Ask **ONE** personal question related to the text.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 `\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf5 \cb3 \strokec5     korean\cf7 \strokec7 :\cf5 \strokec5  \cf8 \strokec8 `\cf2 \cb1 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb3 \strokec8 \uc0\u45817 \u49888 \u51008  '\u44608 \u49688 \u49437 ', \u52828 \u51208 \u54616 \u44256  \u53685 \u52272 \u47141  \u51080 \u45716  **Bilingual \u45436 \u49696  \u47704 \u53664 **\u51077 \u45768 \u45796 .\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 [ROLE]\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - **\uc0\u45824 \u49345 :** \u51473 \u54617 \u49373  \u49688 \u51456 \u51032  \u49324 \u44256 \u47141 \u51012  \u44032 \u51652  \u54617 \u49373 .\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - **\uc0\u50616 \u50612 :** **\u54620 \u44397 \u50612 \u50752  \u50689 \u50612 \u47484  \u51088 \u50672 \u49828 \u47101 \u44172  \u49438 \u50612 \u49436  \u49324 \u50857  (Code-switching).**\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8    - \uc0\u50696 \u49884 : "\u44536  \u48512 \u48516 \u51008  \u51221 \u47568  **Critical**\u54620  \u54252 \u51064 \u53944 \u50688 \u50612 . \u45320 \u51032  **Insight**\u44032  \u46027 \u48372 \u51060 \u45348 ."\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - **\uc0\u47785 \u54364 :** **\u54617 \u49373 \u51060  \u50689 \u50612 \u47196  \u49373 \u44033 \u54616 \u44256  \u50689 \u50612 \u47196  \u45813 \u48320 \u54616 \u46020 \u47197  \u44228 \u49549  \u50976 \u46020 \u54616 \u49464 \u50836 .**\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8    - \uc0\u51656 \u47928 \u51012  \u45912 \u51656  \u46412 , "Can you explain that in English?" \u46608 \u45716  "How would you say that in English?"\u46972 \u44256  \u51088 \u50672 \u49828 \u47101 \u44172  \u44428 \u50976 \u54616 \u49464 \u50836 .\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - **Tone:** **"\uc0\u48512 \u46300 \u47084 \u50868  \u48152 \u47568 "**. \u44428 \u50948 \u51201 \u51060 \u51648  \u50506 \u44256  \u45824 \u54868 \u54616 \u46319  \u54200 \u50504 \u54616 \u44172 .\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8    - **\uc0\u44552 \u51648 :** \u51088 \u44592 \u49548 \u44060  ("\u50504 \u45397 , \u45212  \u44608 \u49688 \u49437 \u51060 \u50556 ") \u54616 \u51648  \u47560 \u49464 \u50836 . \u48148 \u47196  \u48376 \u47200 \u51004 \u47196  \u46308 \u50612 \u44032 \u49464 \u50836 .\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 [TASK]\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 1. **\uc0\u54217 \u44032  \u48143  \u52392 \u49325  (Evaluation & Correction):** - **\u52572 \u45824 \u54620  \u44036 \u44208 \u54616 \u44172 ** \u51089 \u49457 \u54616 \u49464 \u50836 . \u44396 \u44396 \u51208 \u51208  \u49444 \u47749 \u54616 \u51648  \u47560 \u49464 \u50836 .\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8    - \uc0\u54617 \u49373 \u51032  \u50689 \u50612  \u50836 \u50557 \u47928 \u50640 \u49436  **\u51473 \u50836 \u54620  \u47928 \u48277  \u50724 \u47448  1~2\u44060 \u47564 ** \u51665 \u50612 \u49436  \u44256 \u52432 \u51452 \u49464 \u50836 .\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8    - "\uc0\u45236 \u50857  \u51060 \u54644 \u45716  **Perfect**\u54644 . \u45796 \u47564  \u47928 \u48277 \u51201 \u51004 \u47196  \u51060  \u48512 \u48516 \u47564  \u44256 \u52824 \u47732  \u45908  **Natural**\u54624  \u44163  \u44057 \u50500 : [\u49688 \u51221  \u51228 \u50504 ]"\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 2. **\uc0\u49900 \u54868  \u53664 \u47200  (Meaning & Connection):** - **\u51228 \u50557  \u49324 \u54637  1:** \u54620  \u48264 \u50640  **\u46385  \u54616 \u45208 \u51032  \u51656 \u47928 **\u47564  \u45912 \u51648 \u49464 \u50836 .\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8    - **\uc0\u51228 \u50557  \u49324 \u54637  2:** \u51648 \u47928  \u45236 \u50857 \u51012  \u54617 \u49373 \u51032  **\u49892 \u51228  \u49334 \u51060 \u45208  \u44221 \u54744 **\u50640  \u45824 \u51077 \u54644  \u48372 \u44172  \u54616 \u49464 \u50836 .\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8    - **\uc0\u54645 \u49900  \u51204 \u47029 :** \u51656 \u47928 \u51032  \u51032 \u46020 \u45716  \u54620 \u44397 \u50612 (Bilingual)\u47196  \u49444 \u47749 \u54616 \u46104 , **\u45813 \u48320 \u51008  \u50689 \u50612 \u47196  \u54644 \u48372 \u46972 \u44256  \u44428 \u50976 \u54616 \u49464 \u50836 .**\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8    - \uc0\u50696 \u49884 : "\u47564 \u50557  \u45348 \u44032  \u51452 \u51064 \u44277 \u51060 \u50632 \u45796 \u47732  \u50612 \u46523 \u44172  \u54664 \u51012 \u44620 ? **Try to answer in English.**"\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 [Formatting Rules]\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 1. **Headers**: '### ' for section titles.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 2. **Emphasis**: '**text**' for highlighting.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 3. **Lists**: '- ' for bullet points.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 4. **NO TABLES**: \uc0\u54364 (Table)\u47484  \u51208 \u45824  \u49324 \u50857 \u54616 \u51648  \u47560 \u49464 \u50836 . \u45824 \u49888  \u47532 \u49828 \u53944 (-)\u47484  \u49324 \u50857 \u54616 \u49464 \u50836 .\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 [Response Structure]\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 ### \uc0\u55357 \u56541  Feedback\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - \uc0\u45236 \u50857  \u51060 \u54644 \u46020  \u54869 \u51064  (Mix Korean/English).\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - **English Correction** (\uc0\u54645 \u49900 \u47564  \u44036 \u47029 \u55176 ).\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 ### \uc0\u55358 \u56800  Let's Think\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - \uc0\u51648 \u47928  \u45236 \u50857 \u44284  \u54617 \u49373 \u51032  \u49334 \u51012  \u50672 \u44208 \u54616 \u45716  **\u45800  \u54616 \u45208 \u51032 ** \u51656 \u47928 .\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - **"English\uc0\u47196  \u54620 \u48264  \u45824 \u45813 \u54644 \u48380 \u47000 ?"** \u44428 \u50976  \u54252 \u54632 .\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 `\cf2 \cb1 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf5 \cb3 \strokec5   \cf7 \strokec7 \}\cf2 \cb1 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7 \};\cf2 \cb1 \strokec2 \
+\
+\pard\pardeftab720\partightenfactor0
+
+\f0\i \cf2 \cb3 // Main request handler
+\f1\i0 \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf4 \cb3 \strokec4 export\cf2 \strokec2  \cf4 \strokec4 default\cf2 \strokec2  \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3   \cf4 \strokec4 async\cf2 \strokec2  \cf9 \strokec9 fetch\cf7 \strokec7 (\cf10 \strokec10 request\cf7 \strokec7 ,\cf2 \strokec2  \cf10 \strokec10 env\cf7 \strokec7 ,\cf2 \strokec2  \cf10 \strokec10 ctx\cf7 \strokec7 )\cf2 \strokec2  \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7     
+\f0\i \cf2 \strokec2 // Handle CORS preflight (OPTIONS) request
+\f1\i0 \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3     \cf4 \strokec4 if\cf2 \strokec2  (\cf6 \strokec6 request\cf7 \strokec7 .\cf6 \strokec6 method\cf2 \strokec2  \cf4 \strokec4 ===\cf2 \strokec2  \cf8 \strokec8 'OPTIONS'\cf2 \strokec2 ) \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3       \cf4 \strokec4 return\cf2 \strokec2  \cf4 \strokec4 new\cf2 \strokec2  \cf9 \strokec9 Response\cf2 \strokec2 (\cf5 \strokec5 null\cf7 \strokec7 ,\cf2 \strokec2  \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3         status\cf7 \strokec7 :\cf2 \strokec2  \cf10 \strokec10 204\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\cb3         headers\cf7 \strokec7 :\cf2 \strokec2  \cf4 \strokec4 corsHeaders\cf2 \cb1 \strokec2 \
+\cb3       \cf7 \strokec7 \}\cf2 \strokec2 )\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\cb3     \cf7 \strokec7 \}\cf2 \cb1 \strokec2 \
+\
+\cb3     \cf4 \strokec4 const\cf5 \strokec5  \cf6 \strokec6 url\cf5 \strokec5  \cf4 \strokec4 =\cf5 \strokec5  \cf4 \strokec4 new\cf5 \strokec5  \cf9 \strokec9 URL\cf5 \strokec5 (\cf6 \strokec6 request\cf7 \strokec7 .\cf6 \strokec6 url\cf5 \strokec5 )\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7     
+\f0\i \cf2 \strokec2 // Health check endpoint
+\f1\i0 \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3     \cf4 \strokec4 if\cf2 \strokec2  (\cf6 \strokec6 url\cf7 \strokec7 .\cf6 \strokec6 pathname\cf2 \strokec2  \cf4 \strokec4 ===\cf2 \strokec2  \cf8 \strokec8 '/'\cf2 \strokec2  \cf4 \strokec4 &&\cf2 \strokec2  \cf6 \strokec6 request\cf7 \strokec7 .\cf6 \strokec6 method\cf2 \strokec2  \cf4 \strokec4 ===\cf2 \strokec2  \cf8 \strokec8 'GET'\cf2 \strokec2 ) \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3       \cf4 \strokec4 return\cf2 \strokec2  \cf4 \strokec4 new\cf2 \strokec2  \cf9 \strokec9 Response\cf2 \strokec2 (\cf6 \strokec6 JSON\cf7 \strokec7 .\cf9 \strokec9 stringify\cf2 \strokec2 (\cf7 \strokec7 \{\cf2 \strokec2  \cb1 \
+\cb3         status\cf7 \strokec7 :\cf2 \strokec2  \cf8 \strokec8 'ok'\cf7 \strokec7 ,\cf2 \strokec2  \cb1 \
+\cb3         message\cf7 \strokec7 :\cf2 \strokec2  \cf8 \strokec8 'Kim Soo-suk English Teacher API'\cf2 \strokec2  \cb1 \
+\cb3       \cf7 \strokec7 \}\cf2 \strokec2 )\cf7 \strokec7 ,\cf2 \strokec2  \cf7 \strokec7 \{\cf2 \strokec2  \cb1 \
+\cb3         status\cf7 \strokec7 :\cf2 \strokec2  \cf10 \strokec10 200\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\cb3         headers\cf7 \strokec7 :\cf2 \strokec2  \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3           \cf8 \strokec8 'Content-Type'\cf7 \strokec7 :\cf2 \strokec2  \cf8 \strokec8 'application/json'\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\cb3           \cf4 \strokec4 ...corsHeaders\cf2 \cb1 \strokec2 \
+\cb3         \cf7 \strokec7 \}\cf2 \cb1 \strokec2 \
+\cb3       \cf7 \strokec7 \}\cf2 \strokec2 )\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\cb3     \cf7 \strokec7 \}\cf2 \cb1 \strokec2 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7     
+\f0\i \cf2 \strokec2 // Chat API endpoint
+\f1\i0 \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3     \cf4 \strokec4 if\cf2 \strokec2  (\cf6 \strokec6 url\cf7 \strokec7 .\cf6 \strokec6 pathname\cf2 \strokec2  \cf4 \strokec4 ===\cf2 \strokec2  \cf8 \strokec8 '/api/chat'\cf2 \strokec2  \cf4 \strokec4 &&\cf2 \strokec2  \cf6 \strokec6 request\cf7 \strokec7 .\cf6 \strokec6 method\cf2 \strokec2  \cf4 \strokec4 ===\cf2 \strokec2  \cf8 \strokec8 'POST'\cf2 \strokec2 ) \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3       \cf4 \strokec4 try\cf2 \strokec2  \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3         \cf4 \strokec4 const\cf5 \strokec5  \cf6 \strokec6 body\cf5 \strokec5  \cf4 \strokec4 =\cf5 \strokec5  \cf4 \strokec4 await\cf5 \strokec5  \cf6 \strokec6 request\cf7 \strokec7 .\cf9 \strokec9 json\cf5 \strokec5 ()\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\cb3         \cf4 \strokec4 const\cf5 \strokec5  \cf7 \strokec7 \{\cf5 \strokec5  \cf6 \strokec6 questionId\cf7 \strokec7 ,\cf5 \strokec5  \cf6 \strokec6 teacherMode\cf7 \strokec7 ,\cf5 \strokec5  \cf6 \strokec6 modeType\cf7 \strokec7 ,\cf5 \strokec5  \cf6 \strokec6 messages\cf7 \strokec7 ,\cf5 \strokec5  \cf6 \strokec6 initialContext\cf7 \strokec7 ,\cf5 \strokec5  \cf6 \strokec6 isFollowUp\cf7 \strokec7 ,\cf5 \strokec5  \cf6 \strokec6 question\cf5 \strokec5  \cf7 \strokec7 \}\cf5 \strokec5  \cf4 \strokec4 =\cf5 \strokec5  \cf4 \strokec4 body\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7         
+\f0\i \cf2 \strokec2 // Validate required fields
+\f1\i0 \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3         \cf4 \strokec4 if\cf2 \strokec2  (\cf4 \strokec4 !questionId\cf2 \strokec2  \cf4 \strokec4 ||\cf2 \strokec2  \cf4 \strokec4 !teacherMode\cf2 \strokec2  \cf4 \strokec4 ||\cf2 \strokec2  \cf4 \strokec4 !modeType\cf2 \strokec2  \cf4 \strokec4 ||\cf2 \strokec2  \cf4 \strokec4 !question\cf2 \strokec2 ) \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3           \cf4 \strokec4 return\cf2 \strokec2  \cf4 \strokec4 new\cf2 \strokec2  \cf9 \strokec9 Response\cf2 \strokec2 (\cf6 \strokec6 JSON\cf7 \strokec7 .\cf9 \strokec9 stringify\cf2 \strokec2 (\cf7 \strokec7 \{\cf2 \strokec2  \cb1 \
+\cb3             error\cf7 \strokec7 :\cf2 \strokec2  \cf8 \strokec8 'Missing required fields'\cf2 \strokec2  \cb1 \
+\cb3           \cf7 \strokec7 \}\cf2 \strokec2 )\cf7 \strokec7 ,\cf2 \strokec2  \cf7 \strokec7 \{\cf2 \strokec2  \cb1 \
+\cb3             status\cf7 \strokec7 :\cf2 \strokec2  \cf10 \strokec10 400\cf7 \strokec7 ,\cf2 \strokec2  \cb1 \
+\cb3             headers\cf7 \strokec7 :\cf2 \strokec2  \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3               \cf8 \strokec8 'Content-Type'\cf7 \strokec7 :\cf2 \strokec2  \cf8 \strokec8 'application/json'\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\cb3               \cf4 \strokec4 ...corsHeaders\cf2 \cb1 \strokec2 \
+\cb3             \cf7 \strokec7 \}\cf2 \cb1 \strokec2 \
+\cb3           \cf7 \strokec7 \}\cf2 \strokec2 )\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\cb3         \cf7 \strokec7 \}\cf2 \cb1 \strokec2 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7         
+\f0\i \cf2 \strokec2 // Get API key from environment
+\f1\i0 \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3         \cf4 \strokec4 const\cf5 \strokec5  \cf6 \strokec6 apiKey\cf5 \strokec5  \cf4 \strokec4 =\cf5 \strokec5  \cf4 \strokec4 env\cf5 \strokec5 [\cf8 \strokec8 'eng-exam'\cf5 \strokec5 ]\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\cb3         \cf4 \strokec4 if\cf2 \strokec2  (\cf4 \strokec4 !apiKey\cf2 \strokec2 ) \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3           \cf4 \strokec4 return\cf2 \strokec2  \cf4 \strokec4 new\cf2 \strokec2  \cf9 \strokec9 Response\cf2 \strokec2 (\cf6 \strokec6 JSON\cf7 \strokec7 .\cf9 \strokec9 stringify\cf2 \strokec2 (\cf7 \strokec7 \{\cf2 \strokec2  \cb1 \
+\cb3             error\cf7 \strokec7 :\cf2 \strokec2  \cf8 \strokec8 'API key not configured'\cf2 \strokec2  \cb1 \
+\cb3           \cf7 \strokec7 \}\cf2 \strokec2 )\cf7 \strokec7 ,\cf2 \strokec2  \cf7 \strokec7 \{\cf2 \strokec2  \cb1 \
+\cb3             status\cf7 \strokec7 :\cf2 \strokec2  \cf10 \strokec10 500\cf7 \strokec7 ,\cf2 \strokec2  \cb1 \
+\cb3             headers\cf7 \strokec7 :\cf2 \strokec2  \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3               \cf8 \strokec8 'Content-Type'\cf7 \strokec7 :\cf2 \strokec2  \cf8 \strokec8 'application/json'\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\cb3               \cf4 \strokec4 ...corsHeaders\cf2 \cb1 \strokec2 \
+\cb3             \cf7 \strokec7 \}\cf2 \cb1 \strokec2 \
+\cb3           \cf7 \strokec7 \}\cf2 \strokec2 )\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\cb3         \cf7 \strokec7 \}\cf2 \cb1 \strokec2 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7         
+\f0\i \cf2 \strokec2 // Build system prompt based on mode
+\f1\i0 \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3         \cf4 \strokec4 const\cf5 \strokec5  \cf6 \strokec6 systemPrompt\cf5 \strokec5  \cf4 \strokec4 =\cf5 \strokec5  \cf6 \strokec6 SYSTEM_PROMPTS\cf5 \strokec5 [\cf4 \strokec4 modeType\cf5 \strokec5 ]\cf7 \strokec7 ?.\cf5 \strokec5 [\cf4 \strokec4 teacherMode\cf5 \strokec5 ]\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\cb3         \cf4 \strokec4 if\cf2 \strokec2  (\cf4 \strokec4 !systemPrompt\cf2 \strokec2 ) \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3           \cf4 \strokec4 return\cf2 \strokec2  \cf4 \strokec4 new\cf2 \strokec2  \cf9 \strokec9 Response\cf2 \strokec2 (\cf6 \strokec6 JSON\cf7 \strokec7 .\cf9 \strokec9 stringify\cf2 \strokec2 (\cf7 \strokec7 \{\cf2 \strokec2  \cb1 \
+\cb3             error\cf7 \strokec7 :\cf2 \strokec2  \cf8 \strokec8 'Invalid mode or teacher type'\cf2 \strokec2  \cb1 \
+\cb3           \cf7 \strokec7 \}\cf2 \strokec2 )\cf7 \strokec7 ,\cf2 \strokec2  \cf7 \strokec7 \{\cf2 \strokec2  \cb1 \
+\cb3             status\cf7 \strokec7 :\cf2 \strokec2  \cf10 \strokec10 400\cf7 \strokec7 ,\cf2 \strokec2  \cb1 \
+\cb3             headers\cf7 \strokec7 :\cf2 \strokec2  \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3               \cf8 \strokec8 'Content-Type'\cf7 \strokec7 :\cf2 \strokec2  \cf8 \strokec8 'application/json'\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\cb3               \cf4 \strokec4 ...corsHeaders\cf2 \cb1 \strokec2 \
+\cb3             \cf7 \strokec7 \}\cf2 \cb1 \strokec2 \
+\cb3           \cf7 \strokec7 \}\cf2 \strokec2 )\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\cb3         \cf7 \strokec7 \}\cf2 \cb1 \strokec2 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7         
+\f0\i \cf2 \strokec2 // Build API request body
+\f1\i0 \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3         \cf4 \strokec4 const\cf5 \strokec5  \cf6 \strokec6 apiMessages\cf5 \strokec5  \cf4 \strokec4 =\cf5 \strokec5  []\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\cb3         \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7         
+\f0\i \cf2 \strokec2 // Add system prompt as first message
+\f1\i0 \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3         \cf6 \strokec6 apiMessages\cf7 \strokec7 .\cf9 \strokec9 push\cf2 \strokec2 (\cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3           role\cf7 \strokec7 :\cf2 \strokec2  \cf8 \strokec8 'user'\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\cb3           parts\cf7 \strokec7 :\cf2 \strokec2  [\cf7 \strokec7 \{\cf2 \strokec2  text\cf7 \strokec7 :\cf2 \strokec2  \cf4 \strokec4 systemPrompt\cf2 \strokec2  \cf7 \strokec7 \}\cf2 \strokec2 ]\cb1 \
+\cb3         \cf7 \strokec7 \}\cf2 \strokec2 )\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7         
+\f0\i \cf2 \strokec2 // \uc0\u52488 \u44592  \u49464 \u49496 \u51064  \u44221 \u50864 : \u47928 \u51228  \u54644 \u49444  \u50836 \u52397 
+\f1\i0 \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3         \cf4 \strokec4 if\cf2 \strokec2  (\cf4 \strokec4 !isFollowUp\cf2 \strokec2 ) \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3           \cf4 \strokec4 let\cf5 \strokec5  \cf4 \strokec4 initialPrompt\cf5 \strokec5  \cf4 \strokec4 =\cf5 \strokec5  \cf8 \strokec8 ''\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\cb3           \cb1 \
+\cb3           \cf4 \strokec4 if\cf2 \strokec2  (\cf4 \strokec4 modeType\cf2 \strokec2  \cf4 \strokec4 ===\cf2 \strokec2  \cf8 \strokec8 'reading'\cf2 \strokec2 ) \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3             \cf4 \strokec4 initialPrompt\cf2 \strokec2  \cf4 \strokec4 =\cf2 \strokec2  \cf8 \strokec8 `\cf2 \cb1 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb3 \strokec8 [Task]\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 Analyze Question \cf7 \strokec7 $\{\cf4 \strokec4 questionId\cf7 \strokec7 \}\cf8 \strokec8 .\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 Content: "\cf7 \strokec7 $\{\cf6 \strokec6 question\cf7 \strokec7 .\cf6 \strokec6 content\cf7 \strokec7 \}\cf8 \strokec8 "\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 Options: "\cf7 \strokec7 $\{\cf6 \strokec6 JSON\cf7 \strokec7 .\cf9 \strokec9 stringify\cf8 \strokec8 (\cf6 \strokec6 question\cf7 \strokec7 .\cf6 \strokec6 options\cf8 \strokec8 )\cf7 \strokec7 \}\cf8 \strokec8 "\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 Answer: \cf7 \strokec7 $\{\cf6 \strokec6 question\cf7 \strokec7 .\cf6 \strokec6 answer\cf7 \strokec7 \}\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 Start immediately with analysis.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 `\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3           \cf7 \strokec7 \}\cf2 \strokec2  \cf4 \strokec4 else\cf2 \strokec2  \cf4 \strokec4 if\cf2 \strokec2  (\cf4 \strokec4 modeType\cf2 \strokec2  \cf4 \strokec4 ===\cf2 \strokec2  \cf8 \strokec8 'essay'\cf2 \strokec2  \cf4 \strokec4 &&\cf2 \strokec2  \cf4 \strokec4 initialContext\cf2 \strokec2 ) \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3             \cf4 \strokec4 initialPrompt\cf2 \strokec2  \cf4 \strokec4 =\cf2 \strokec2  \cf8 \strokec8 `\cf2 \cb1 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb3 \strokec8 [Task]\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 Student is studying Question \cf7 \strokec7 $\{\cf4 \strokec4 questionId\cf7 \strokec7 \}\cf8 \strokec8 .\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 Original Text: "\cf7 \strokec7 $\{\cf6 \strokec6 question\cf7 \strokec7 .\cf6 \strokec6 content\cf7 \strokec7 \}\cf8 \strokec8 "\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 [Student's Input]\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 1. Korean Understanding: "\cf7 \strokec7 $\{\cf6 \strokec6 initialContext\cf7 \strokec7 .\cf6 \strokec6 korean\cf7 \strokec7 \}\cf8 \strokec8 "\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 2. English Summary: "\cf7 \strokec7 $\{\cf6 \strokec6 initialContext\cf7 \strokec7 .\cf6 \strokec6 english\cf7 \strokec7 \}\cf8 \strokec8 "\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 [Action]\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 Evaluate their input first, then start the discussion/Socratic questioning.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 `\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3           \cf7 \strokec7 \}\cf2 \cb1 \strokec2 \
+\cb3           \cb1 \
+\cb3           \cf6 \strokec6 apiMessages\cf7 \strokec7 .\cf9 \strokec9 push\cf2 \strokec2 (\cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3             role\cf7 \strokec7 :\cf2 \strokec2  \cf8 \strokec8 'user'\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\cb3             parts\cf7 \strokec7 :\cf2 \strokec2  [\cf7 \strokec7 \{\cf2 \strokec2  text\cf7 \strokec7 :\cf2 \strokec2  \cf4 \strokec4 initialPrompt\cf2 \strokec2  \cf7 \strokec7 \}\cf2 \strokec2 ]\cb1 \
+\cb3           \cf7 \strokec7 \}\cf2 \strokec2 )\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\cb3         \cf7 \strokec7 \}\cf2 \strokec2  \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7         
+\f0\i \cf2 \strokec2 // \uc0\u54980 \u49549  \u45824 \u54868 \u51064  \u44221 \u50864 : \u45824 \u54868  \u51060 \u47141  + \u52968 \u53581 \u49828 \u53944  \u51221 \u48372  \u52628 \u44032 
+\f1\i0 \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3         \cf4 \strokec4 else\cf2 \strokec2  \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7           
+\f0\i \cf2 \strokec2 // \uc0\u47676 \u51200  \u47928 \u51228  \u52968 \u53581 \u49828 \u53944 \u47484  \u51228 \u44277  (\u47784 \u45944 \u51060  \u44592 \u50613 \u54624  \u49688  \u51080 \u46020 \u47197 )
+\f1\i0 \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3           \cf4 \strokec4 const\cf5 \strokec5  \cf6 \strokec6 contextReminder\cf5 \strokec5  \cf4 \strokec4 =\cf5 \strokec5  \cf8 \strokec8 `\cf2 \cb1 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf8 \cb3 \strokec8 [Context Reminder]\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 You are discussing Question \cf7 \strokec7 $\{\cf4 \strokec4 questionId\cf7 \strokec7 \}\cf8 \strokec8 .\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 Original Text: "\cf7 \strokec7 $\{\cf6 \strokec6 question\cf7 \strokec7 .\cf6 \strokec6 content\cf7 \strokec7 \}\cf8 \strokec8 "\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 Answer: \cf7 \strokec7 $\{\cf6 \strokec6 question\cf7 \strokec7 .\cf6 \strokec6 answer\cf7 \strokec7 \}\cf2 \cb1 \strokec2 \
+\
+\cf8 \cb3 \strokec8 [Important]\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - The student has already received your initial explanation.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - Now they are asking a follow-up question or commenting.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - Respond naturally to their message.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - Keep your response focused on their specific question.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 - Do NOT repeat the full analysis. Just answer what they asked.\cf2 \cb1 \strokec2 \
+\cf8 \cb3 \strokec8 `\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3           \cf6 \strokec6 apiMessages\cf7 \strokec7 .\cf9 \strokec9 push\cf2 \strokec2 (\cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3             role\cf7 \strokec7 :\cf2 \strokec2  \cf8 \strokec8 'user'\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\cb3             parts\cf7 \strokec7 :\cf2 \strokec2  [\cf7 \strokec7 \{\cf2 \strokec2  text\cf7 \strokec7 :\cf2 \strokec2  \cf4 \strokec4 contextReminder\cf2 \strokec2  \cf7 \strokec7 \}\cf2 \strokec2 ]\cb1 \
+\cb3           \cf7 \strokec7 \}\cf2 \strokec2 )\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\cb3           \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7           
+\f0\i \cf2 \strokec2 // Add "model acknowledged" response
+\f1\i0 \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3           \cf6 \strokec6 apiMessages\cf7 \strokec7 .\cf9 \strokec9 push\cf2 \strokec2 (\cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3             role\cf7 \strokec7 :\cf2 \strokec2  \cf8 \strokec8 'model'\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\cb3             parts\cf7 \strokec7 :\cf2 \strokec2  [\cf7 \strokec7 \{\cf2 \strokec2  text\cf7 \strokec7 :\cf2 \strokec2  \cf8 \strokec8 '\uc0\u45348 , \u51060 \u54644 \u54664 \u50612 . \u54617 \u49373 \u51032  \u51656 \u47928 \u50640  \u51665 \u51473 \u54644 \u49436  \u45813 \u48320 \u54624 \u44172 .'\cf2 \strokec2  \cf7 \strokec7 \}\cf2 \strokec2 ]\cb1 \
+\cb3           \cf7 \strokec7 \}\cf2 \strokec2 )\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\cb3           \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7           
+\f0\i \cf2 \strokec2 // \uc0\u45824 \u54868  \u51060 \u47141  \u52628 \u44032 
+\f1\i0 \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3           \cf4 \strokec4 if\cf2 \strokec2  (\cf4 \strokec4 messages\cf2 \strokec2  \cf4 \strokec4 &&\cf2 \strokec2  \cf6 \strokec6 messages\cf7 \strokec7 .\cf11 \strokec11 length\cf2 \strokec2  \cf4 \strokec4 >\cf2 \strokec2  \cf10 \strokec10 0\cf2 \strokec2 ) \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3             \cf4 \strokec4 for\cf2 \strokec2  (\cf4 \strokec4 const\cf5 \strokec5  \cf6 \strokec6 msg\cf5 \strokec5  \cf4 \strokec4 of\cf2 \strokec2  \cf4 \strokec4 messages\cf2 \strokec2 ) \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3               \cf6 \strokec6 apiMessages\cf7 \strokec7 .\cf9 \strokec9 push\cf2 \strokec2 (\cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3                 role\cf7 \strokec7 :\cf2 \strokec2  \cf6 \strokec6 msg\cf7 \strokec7 .\cf6 \strokec6 role\cf2 \strokec2  \cf4 \strokec4 ===\cf2 \strokec2  \cf8 \strokec8 'user'\cf2 \strokec2  \cf4 \strokec4 ?\cf2 \strokec2  \cf8 \strokec8 'user'\cf2 \strokec2  \cf4 \strokec4 :\cf2 \strokec2  \cf8 \strokec8 'model'\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\cb3                 parts\cf7 \strokec7 :\cf2 \strokec2  [\cf7 \strokec7 \{\cf2 \strokec2  text\cf7 \strokec7 :\cf2 \strokec2  \cf6 \strokec6 msg\cf7 \strokec7 .\cf6 \strokec6 text\cf2 \strokec2  \cf4 \strokec4 ||\cf2 \strokec2  \cf8 \strokec8 ''\cf2 \strokec2  \cf7 \strokec7 \}\cf2 \strokec2 ]\cb1 \
+\cb3               \cf7 \strokec7 \}\cf2 \strokec2 )\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\cb3             \cf7 \strokec7 \}\cf2 \cb1 \strokec2 \
+\cb3           \cf7 \strokec7 \}\cf2 \cb1 \strokec2 \
+\cb3         \cf7 \strokec7 \}\cf2 \cb1 \strokec2 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7         
+\f0\i \cf2 \strokec2 // Call Gemini API
+\f1\i0 \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3         \cf4 \strokec4 const\cf5 \strokec5  \cf6 \strokec6 geminiResponse\cf5 \strokec5  \cf4 \strokec4 =\cf5 \strokec5  \cf4 \strokec4 await\cf5 \strokec5  \cf9 \strokec9 fetch\cf5 \strokec5 (\cf2 \cb1 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf5 \cb3 \strokec5           \cf8 \strokec8 `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite-preview:generateContent?key=\cf7 \strokec7 $\{\cf4 \strokec4 apiKey\cf7 \strokec7 \}\cf8 \strokec8 `\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\cf5 \cb3 \strokec5           \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cf5 \cb3 \strokec5             method\cf7 \strokec7 :\cf5 \strokec5  \cf8 \strokec8 'POST'\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\cf5 \cb3 \strokec5             headers\cf7 \strokec7 :\cf5 \strokec5  \cf7 \strokec7 \{\cf5 \strokec5  \cf8 \strokec8 'Content-Type'\cf7 \strokec7 :\cf5 \strokec5  \cf8 \strokec8 'application/json'\cf5 \strokec5  \cf7 \strokec7 \},\cf2 \cb1 \strokec2 \
+\cf5 \cb3 \strokec5             body\cf7 \strokec7 :\cf5 \strokec5  \cf6 \strokec6 JSON\cf7 \strokec7 .\cf9 \strokec9 stringify\cf5 \strokec5 (\cf7 \strokec7 \{\cf5 \strokec5  contents\cf7 \strokec7 :\cf5 \strokec5  \cf4 \strokec4 apiMessages\cf5 \strokec5  \cf7 \strokec7 \}\cf5 \strokec5 )\cf2 \cb1 \strokec2 \
+\cf5 \cb3 \strokec5           \cf7 \strokec7 \}\cf2 \cb1 \strokec2 \
+\cf5 \cb3 \strokec5         )\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3         \cf4 \strokec4 if\cf2 \strokec2  (\cf4 \strokec4 !\cf6 \strokec6 geminiResponse\cf7 \strokec7 .\cf6 \strokec6 ok\cf2 \strokec2 ) \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3           \cf4 \strokec4 const\cf5 \strokec5  \cf6 \strokec6 errorData\cf5 \strokec5  \cf4 \strokec4 =\cf5 \strokec5  \cf4 \strokec4 await\cf5 \strokec5  \cf6 \strokec6 geminiResponse\cf7 \strokec7 .\cf9 \strokec9 text\cf5 \strokec5 ()\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\cb3           \cf6 \strokec6 console\cf7 \strokec7 .\cf9 \strokec9 error\cf2 \strokec2 (\cf8 \strokec8 'Gemini API Error:'\cf7 \strokec7 ,\cf2 \strokec2  \cf4 \strokec4 errorData\cf2 \strokec2 )\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\cb3           \cf4 \strokec4 return\cf2 \strokec2  \cf4 \strokec4 new\cf2 \strokec2  \cf9 \strokec9 Response\cf2 \strokec2 (\cf6 \strokec6 JSON\cf7 \strokec7 .\cf9 \strokec9 stringify\cf2 \strokec2 (\cf7 \strokec7 \{\cf2 \strokec2  \cb1 \
+\cb3             error\cf7 \strokec7 :\cf2 \strokec2  \cf8 \strokec8 'AI API error'\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\cb3             details\cf7 \strokec7 :\cf2 \strokec2  \cf6 \strokec6 geminiResponse\cf7 \strokec7 .\cf6 \strokec6 status\cf2 \cb1 \strokec2 \
+\cb3           \cf7 \strokec7 \}\cf2 \strokec2 )\cf7 \strokec7 ,\cf2 \strokec2  \cf7 \strokec7 \{\cf2 \strokec2  \cb1 \
+\cb3             status\cf7 \strokec7 :\cf2 \strokec2  \cf10 \strokec10 502\cf7 \strokec7 ,\cf2 \strokec2  \cb1 \
+\cb3             headers\cf7 \strokec7 :\cf2 \strokec2  \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3               \cf8 \strokec8 'Content-Type'\cf7 \strokec7 :\cf2 \strokec2  \cf8 \strokec8 'application/json'\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\cb3               \cf4 \strokec4 ...corsHeaders\cf2 \cb1 \strokec2 \
+\cb3             \cf7 \strokec7 \}\cf2 \cb1 \strokec2 \
+\cb3           \cf7 \strokec7 \}\cf2 \strokec2 )\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\cb3         \cf7 \strokec7 \}\cf2 \cb1 \strokec2 \
+\
+\cb3         \cf4 \strokec4 const\cf5 \strokec5  \cf6 \strokec6 geminiData\cf5 \strokec5  \cf4 \strokec4 =\cf5 \strokec5  \cf4 \strokec4 await\cf5 \strokec5  \cf6 \strokec6 geminiResponse\cf7 \strokec7 .\cf9 \strokec9 json\cf5 \strokec5 ()\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\cb3         \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7         
+\f0\i \cf2 \strokec2 // Extract response text
+\f1\i0 \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3         \cf4 \strokec4 const\cf5 \strokec5  \cf6 \strokec6 responseText\cf5 \strokec5  \cf4 \strokec4 =\cf5 \strokec5  \cf6 \strokec6 geminiData\cf7 \strokec7 .\cf6 \strokec6 candidates\cf7 \strokec7 ?.\cf5 \strokec5 [\cf10 \strokec10 0\cf5 \strokec5 ]\cf7 \strokec7 ?.\cf6 \strokec6 content\cf7 \strokec7 ?.\cf6 \strokec6 parts\cf7 \strokec7 ?.\cf5 \strokec5 [\cf10 \strokec10 0\cf5 \strokec5 ]\cf7 \strokec7 ?.\cf6 \strokec6 text\cf5 \strokec5  \cf4 \strokec4 ||\cf5 \strokec5  \cf8 \strokec8 ''\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\cb3         \cb1 \
+\cb3         \cf4 \strokec4 if\cf2 \strokec2  (\cf4 \strokec4 !responseText\cf2 \strokec2 ) \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3           \cf4 \strokec4 return\cf2 \strokec2  \cf4 \strokec4 new\cf2 \strokec2  \cf9 \strokec9 Response\cf2 \strokec2 (\cf6 \strokec6 JSON\cf7 \strokec7 .\cf9 \strokec9 stringify\cf2 \strokec2 (\cf7 \strokec7 \{\cf2 \strokec2  \cb1 \
+\cb3             error\cf7 \strokec7 :\cf2 \strokec2  \cf8 \strokec8 'Empty response from AI'\cf2 \strokec2  \cb1 \
+\cb3           \cf7 \strokec7 \}\cf2 \strokec2 )\cf7 \strokec7 ,\cf2 \strokec2  \cf7 \strokec7 \{\cf2 \strokec2  \cb1 \
+\cb3             status\cf7 \strokec7 :\cf2 \strokec2  \cf10 \strokec10 502\cf7 \strokec7 ,\cf2 \strokec2  \cb1 \
+\cb3             headers\cf7 \strokec7 :\cf2 \strokec2  \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3               \cf8 \strokec8 'Content-Type'\cf7 \strokec7 :\cf2 \strokec2  \cf8 \strokec8 'application/json'\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\cb3               \cf4 \strokec4 ...corsHeaders\cf2 \cb1 \strokec2 \
+\cb3             \cf7 \strokec7 \}\cf2 \cb1 \strokec2 \
+\cb3           \cf7 \strokec7 \}\cf2 \strokec2 )\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\cb3         \cf7 \strokec7 \}\cf2 \cb1 \strokec2 \
+\
+\cb3         \cf4 \strokec4 return\cf2 \strokec2  \cf4 \strokec4 new\cf2 \strokec2  \cf9 \strokec9 Response\cf2 \strokec2 (\cf6 \strokec6 JSON\cf7 \strokec7 .\cf9 \strokec9 stringify\cf2 \strokec2 (\cf7 \strokec7 \{\cf2 \strokec2  \cb1 \
+\cb3           success\cf7 \strokec7 :\cf2 \strokec2  \cf5 \strokec5 true\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\cb3           response\cf7 \strokec7 :\cf2 \strokec2  \cf4 \strokec4 responseText\cf2 \strokec2  \cb1 \
+\cb3         \cf7 \strokec7 \}\cf2 \strokec2 )\cf7 \strokec7 ,\cf2 \strokec2  \cf7 \strokec7 \{\cf2 \strokec2  \cb1 \
+\cb3           status\cf7 \strokec7 :\cf2 \strokec2  \cf10 \strokec10 200\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\cb3           headers\cf7 \strokec7 :\cf2 \strokec2  \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3             \cf8 \strokec8 'Content-Type'\cf7 \strokec7 :\cf2 \strokec2  \cf8 \strokec8 'application/json'\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\cb3             \cf4 \strokec4 ...corsHeaders\cf2 \cb1 \strokec2 \
+\cb3           \cf7 \strokec7 \}\cf2 \cb1 \strokec2 \
+\cb3         \cf7 \strokec7 \}\cf2 \strokec2 )\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\
+\cb3       \cf7 \strokec7 \}\cf2 \strokec2  \cf4 \strokec4 catch\cf2 \strokec2  (\cf4 \strokec4 error\cf2 \strokec2 ) \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3         \cf6 \strokec6 console\cf7 \strokec7 .\cf9 \strokec9 error\cf2 \strokec2 (\cf8 \strokec8 'Worker Error:'\cf7 \strokec7 ,\cf2 \strokec2  \cf4 \strokec4 error\cf2 \strokec2 )\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\cb3         \cf4 \strokec4 return\cf2 \strokec2  \cf4 \strokec4 new\cf2 \strokec2  \cf9 \strokec9 Response\cf2 \strokec2 (\cf6 \strokec6 JSON\cf7 \strokec7 .\cf9 \strokec9 stringify\cf2 \strokec2 (\cf7 \strokec7 \{\cf2 \strokec2  \cb1 \
+\cb3           error\cf7 \strokec7 :\cf2 \strokec2  \cf8 \strokec8 'Internal server error'\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\cb3           message\cf7 \strokec7 :\cf2 \strokec2  \cf6 \strokec6 error\cf7 \strokec7 .\cf6 \strokec6 message\cf2 \strokec2  \cb1 \
+\cb3         \cf7 \strokec7 \}\cf2 \strokec2 )\cf7 \strokec7 ,\cf2 \strokec2  \cf7 \strokec7 \{\cf2 \strokec2  \cb1 \
+\cb3           status\cf7 \strokec7 :\cf2 \strokec2  \cf10 \strokec10 500\cf7 \strokec7 ,\cf2 \strokec2  \cb1 \
+\cb3           headers\cf7 \strokec7 :\cf2 \strokec2  \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3             \cf8 \strokec8 'Content-Type'\cf7 \strokec7 :\cf2 \strokec2  \cf8 \strokec8 'application/json'\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\cb3             \cf4 \strokec4 ...corsHeaders\cf2 \cb1 \strokec2 \
+\cb3           \cf7 \strokec7 \}\cf2 \cb1 \strokec2 \
+\cb3         \cf7 \strokec7 \}\cf2 \strokec2 )\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\cb3       \cf7 \strokec7 \}\cf2 \cb1 \strokec2 \
+\cb3     \cf7 \strokec7 \}\cf2 \cb1 \strokec2 \
+\
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7     
+\f0\i \cf2 \strokec2 // 404 for unknown routes
+\f1\i0 \cb1 \
+\pard\pardeftab720\partightenfactor0
+\cf2 \cb3     \cf4 \strokec4 return\cf2 \strokec2  \cf4 \strokec4 new\cf2 \strokec2  \cf9 \strokec9 Response\cf2 \strokec2 (\cf6 \strokec6 JSON\cf7 \strokec7 .\cf9 \strokec9 stringify\cf2 \strokec2 (\cf7 \strokec7 \{\cf2 \strokec2  \cb1 \
+\cb3       error\cf7 \strokec7 :\cf2 \strokec2  \cf8 \strokec8 'Not found'\cf2 \strokec2  \cb1 \
+\cb3     \cf7 \strokec7 \}\cf2 \strokec2 )\cf7 \strokec7 ,\cf2 \strokec2  \cf7 \strokec7 \{\cf2 \strokec2  \cb1 \
+\cb3       status\cf7 \strokec7 :\cf2 \strokec2  \cf10 \strokec10 404\cf7 \strokec7 ,\cf2 \strokec2  \cb1 \
+\cb3       headers\cf7 \strokec7 :\cf2 \strokec2  \cf7 \strokec7 \{\cf2 \cb1 \strokec2 \
+\cb3         \cf8 \strokec8 'Content-Type'\cf7 \strokec7 :\cf2 \strokec2  \cf8 \strokec8 'application/json'\cf7 \strokec7 ,\cf2 \cb1 \strokec2 \
+\cb3         \cf4 \strokec4 ...corsHeaders\cf2 \cb1 \strokec2 \
+\cb3       \cf7 \strokec7 \}\cf2 \cb1 \strokec2 \
+\cb3     \cf7 \strokec7 \}\cf2 \strokec2 )\cf7 \strokec7 ;\cf2 \cb1 \strokec2 \
+\cb3   \cf7 \strokec7 \}\cf2 \cb1 \strokec2 \
+\pard\pardeftab720\partightenfactor0
+\cf7 \cb3 \strokec7 \};\cf2 \cb1 \strokec2 \
+}

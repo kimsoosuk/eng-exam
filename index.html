@@ -5,19 +5,75 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>김수석 English Teacher</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Gowun+Batang:wght@400;700&family=Noto+Sans+KR:wght@300;400;500;700&display=swap"
+    rel="stylesheet">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            paper: '#f8f3e8',
+            'paper-edge': '#e8dfc8',
+            ink: '#1a1510',
+            'ink-light': '#3d3225',
+            'ink-faint': '#8a7c6a',
+            accent: '#3d7a4a',
+            'accent-warm': '#4a9e5c',
+            cover: '#1e3a28',
+            'cover-light': '#2a5438',
+            spine: '#152a1c',
+            gold: '#c4a44a',
+            'gold-dim': '#8a7432',
+            'red-soft': '#a63d2f',
+          }
+        }
+      }
+    }
+  </script>
+
   <style>
     * {
-      font-family: 'Noto Sans KR', -apple-system, BlinkMacSystemFont, sans-serif;
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      height: 100%;
+      -webkit-font-smoothing: antialiased;
+      overflow: hidden;
+    }
+
+    body {
+      background: #5a6e5f;
+      background-image: radial-gradient(ellipse at 40% 30%, #6e8a72 0%, #4a6050 60%, #3a4e40 100%);
+      font-family: 'Gowun Batang', 'Batang', 'Georgia', serif;
+      color: #1a1510;
+    }
+
+    #app {
+      height: 100%;
+    }
+
+    .font-sans-kr {
+      font-family: 'Noto Sans KR', 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+    }
+
+    .font-serif-kr {
+      font-family: 'Gowun Batang', 'Batang', 'Georgia', serif;
     }
 
     @keyframes fadeIn {
       from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(8px);
       }
 
       to {
@@ -26,8 +82,8 @@
       }
     }
 
-    .animate-fadeIn {
-      animation: fadeIn 0.3s ease-out forwards;
+    .animate-fade-in {
+      animation: fadeIn 0.4s ease-out forwards;
     }
 
     @keyframes pulse {
@@ -46,18 +102,97 @@
       animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
     }
 
-    .scrollbar-hide::-webkit-scrollbar {
-      display: none;
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
     }
 
-    .scrollbar-hide {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
+    .animate-spin {
+      animation: spin 1s linear infinite;
+    }
+
+    .book-scroll::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .book-scroll::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, .1);
+      border-radius: 2px;
+    }
+
+    .book-scroll {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 0, 0, .1) transparent;
+    }
+
+    .book-shell {
+      box-shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 4px 12px rgba(0, 0, 0, .25), 0 16px 48px rgba(0, 0, 0, .35);
+    }
+
+    .book-spine-bg {
+      background: linear-gradient(90deg, #152a1c, #2a5438 40%, #1e3a28 70%, #2a5438);
+      box-shadow: inset -2px 0 6px rgba(0, 0, 0, .4);
+    }
+
+    .book-edge-right {
+      background: repeating-linear-gradient(180deg, #f8f3e8 0px, #f8f3e8 1px, #e8dfc8 1px, #e8dfc8 2px);
+    }
+
+    .page-left-bg {
+      background: linear-gradient(90deg, rgba(0, 0, 0, .01), transparent 3%, transparent 96%, rgba(0, 0, 0, .015));
+    }
+
+    .page-right-bg {
+      background: linear-gradient(90deg, rgba(0, 0, 0, .015), transparent 4%, transparent);
+    }
+
+    .page-num-bg {
+      background: linear-gradient(transparent, #f8f3e8 40%);
+    }
+
+    .header-line {
+      background: linear-gradient(90deg, transparent, #a0927c, transparent);
+    }
+
+    .spine-gold-line {
+      background: #8a7432;
+    }
+
+    .teacher-box {
+      background: #f0ebe0;
+      border-left: 3px solid #3d7a4a;
+    }
+
+    .chat-msg-user {
+      background: #fff;
+      border-right: 3px solid #c4a44a;
+    }
+
+    .chat-input-bar {
+      background: rgba(248, 243, 232, 0.95);
+      border-top: 1px solid rgba(44, 36, 22, .08);
+    }
+
+    .answer-bar {
+      background: rgba(248, 243, 232, 0.95);
+      border-top: 1px solid rgba(44, 36, 22, .08);
+    }
+
+    @media (max-width: 900px) {
+      .book-spine-bg {
+        background: linear-gradient(180deg, #152a1c, #2a5438, #1e3a28);
+        box-shadow: inset 0 -2px 6px rgba(0, 0, 0, .3);
+      }
     }
   </style>
 </head>
 
-<body class="bg-gray-50 min-h-screen">
+<body>
   <div id="app"></div>
 
   <script>
@@ -94,34 +229,37 @@
       { id: 41, category: "사회 (장문: 제목)", content: PASSAGE_41_42, options: ["①", "②", "③", "④", "⑤"], answer: 1 },
       { id: 42, category: "사회 (장문: 어휘)", content: PASSAGE_41_42 + `\n\n(a) accuracy, (b) include, (c) quality, (d) morally insulating, (e) escape`, options: ["① (a)", "② (b)", "③ (c)", "④ (d)", "⑤ (e)"], answer: 2 },
       { id: 43, category: "문학 (장문: 순서)", content: PASSAGE_43_45, options: ["① (B)-(D)-(C)", "② (C)-(D)-(B)", "③ (D)-(C)-(B)", "④ (C)-(B)-(D)", "⑤ (D)-(B)-(C)"], answer: 3 },
-      { id: 44, category: "문학 (장문: 지칭 추론)", content: PASSAGE_43_45 + `\n\n(a) he (Jack), (b) you (Jack), (c) his (Victor), (d) You (Jack), (e) he (Jack)`, options: ["① (a)", "② (b)", "③ (c)", "④ (d)", "⑤ (e)"], answer: 3 },
+      { id: 44, category: "문학 (장문: 지칭 추론)", content: PASSAGE_43_45, prompt: "(a)～(e) 중에서 가리키는 대상이 나머지 넷과 다른 것은?", options: ["① (a)", "② (b)", "③ (c)", "④ (d)", "⑤ (e)"], answer: 3 },
       { id: 45, category: "문학 (장문: 내용 일치)", content: PASSAGE_43_45, options: ["①", "②", "③", "④", "⑤"], answer: 2 }
     ];
 
     // ==================== SVG ICONS ====================
     const Icons = {
-      book: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/></svg>`,
-      brain: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.54"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.54"/></svg>`,
-      pen: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>`,
-      send: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>`,
-      arrowLeft: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19L5 12L12 5"/></svg>`,
-      chevronDown: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9L12 15L18 9"/></svg>`,
-      sparkles: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.936A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .963 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.581a.5.5 0 0 1 0 .964L15.5 14.063a2 2 0 0 0-1.437 1.437l-1.582 6.135a.5.5 0 0 1-.963 0z"/></svg>`,
-      graduationCap: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>`,
-      message: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>`,
-      dots: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>`
+      home: `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>`,
+      brain: `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9.5 2A2.5 2.5 0 0 1 12 4.5v15a2.5 2.5 0 0 1-4.96.44 2.5 2.5 0 0 1-2.96-3.08 3 3 0 0 1-.34-5.58 2.5 2.5 0 0 1 1.32-4.24 2.5 2.5 0 0 1 4.44-1.54"/><path d="M14.5 2A2.5 2.5 0 0 0 12 4.5v15a2.5 2.5 0 0 0 4.96.44 2.5 2.5 0 0 0 2.96-3.08 3 3 0 0 0 .34-5.58 2.5 2.5 0 0 0-1.32-4.24 2.5 2.5 0 0 0-4.44-1.54"/></svg>`,
+      pen: `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/></svg>`,
+      send: `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13"/><path d="M22 2L15 22L11 13L2 9L22 2Z"/></svg>`,
+      arrowRight: `<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5l7 7-7 7"/></svg>`,
+      chevronDown: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9L12 15L18 9"/></svg>`,
+      dots: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>`,
+      check: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>`,
+      x: `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 6L6 18"/><path d="M6 6l12 12"/></svg>`
     };
 
     // ==================== STATE ====================
     let state = {
-      view: 'home',
+      view: 'cover',        // 'cover' | 'essay-input' | 'chat'
       selectedId: EXAM_DATA[0].id,
-      teacherMode: 'korean', // Default changed to korean
-      modeType: 'reading',
+      teacherMode: 'korean',
+      modeType: 'reading',   // 'reading' | 'essay'
       messages: [],
       isLoading: false,
-      essayInputs: null
+      essayInputs: null,
+      userAnswer: null,
+      answerSubmitted: false,
     };
+    let lastView = null;
+    let msgCount = 0; // track rendered message count for partial updates
 
     // ==================== UTILITIES ====================
     function escapeHtml(text) {
@@ -132,352 +270,340 @@
 
     function processInlineStyles(text) {
       if (!text) return '';
-      return text.replace(/\*\*(.*?)\*\*/g, '<span class="font-bold text-green-900 bg-green-50 px-1 rounded mx-0.5 shadow-sm">$1</span>');
+      return text.replace(/\*\*(.*?)\*\*/g, '<strong style="font-weight:bold; color:#1e3a28; background:linear-gradient(180deg, transparent 58%, rgba(74,158,92,.18) 58%); padding:0 2px;">$1</strong>');
     }
 
     function renderFormattedText(text) {
       if (!text || typeof text !== 'string') return '';
       const lines = text.split('\n');
       let html = '';
-
       for (const line of lines) {
         const trimmed = line.trim();
         if (trimmed.startsWith('###')) {
           const title = trimmed.replace(/^###\s*/, '');
-          html += `<h3 class="text-xl font-bold text-green-700 mt-6 mb-3 flex items-center gap-2 border-b-2 border-green-100 pb-2">${processInlineStyles(escapeHtml(title))}</h3>`;
+          html += `<h3 class="text-sm font-bold text-accent mt-5 mb-2 flex items-center gap-2 font-sans-kr" style="border-bottom:1px solid rgba(44,36,22,.08); padding-bottom:6px;">${processInlineStyles(escapeHtml(title))}</h3>`;
         } else if (trimmed.startsWith('- ')) {
           const content = trimmed.substring(2);
-          html += `<div class="flex items-start gap-3 mb-2 pl-2 group hover:bg-green-50/50 p-1 rounded transition-colors"><span class="text-green-400 mt-1.5 text-[8px] flex-shrink-0">●</span><p class="text-gray-700 leading-relaxed flex-1">${processInlineStyles(escapeHtml(content))}</p></div>`;
+          html += `<div class="flex items-start gap-2 mb-1.5 pl-1"><span class="text-accent mt-1.5 text-[6px] flex-shrink-0">●</span><p class="text-ink-light leading-[1.85] flex-1 text-[0.82rem]" style="word-break:keep-all;">${processInlineStyles(escapeHtml(content))}</p></div>`;
         } else if (trimmed === '') {
           html += '<div class="h-2"></div>';
         } else {
-          html += `<p class="text-gray-800 leading-7 mb-1.5 font-normal">${processInlineStyles(escapeHtml(line))}</p>`;
+          html += `<p class="text-ink leading-[1.85] mb-1.5 text-[0.82rem]" style="word-break:keep-all;">${processInlineStyles(escapeHtml(line))}</p>`;
         }
       }
       return html;
     }
 
-    function getQuestion(id) {
-      return EXAM_DATA.find(q => q.id === parseInt(id));
-    }
+    function getQuestion(id) { return EXAM_DATA.find(q => q.id === parseInt(id)); }
 
     function getPlaceholderText() {
-      if (state.modeType === 'reading') {
-        // Deep Reading 모드
-        return state.teacherMode === 'native'
-          ? 'Ask anything...'
-          : '궁금한 점을 물어보세요!';
-      } else {
-        // Discussion 모드
-        return state.teacherMode === 'native'
-          ? 'Type your answer here...'
-          : '여기에 답변을 입력하세요...';
-      }
+      if (state.modeType === 'reading') return state.teacherMode === 'native' ? 'Ask anything...' : '궁금한 점을 물어보세요!';
+      return state.teacherMode === 'native' ? 'Type your answer here...' : '여기에 답변을 입력하세요...';
     }
 
     // ==================== API ====================
     async function callChatAPI(questionId, teacherMode, modeType, messages, initialContext, isFollowUp = false) {
       const question = getQuestion(questionId);
-
       try {
         const response = await fetch(`${API_URL}/api/chat`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            questionId,
-            teacherMode,
-            modeType,
-            messages,
-            initialContext,
-            isFollowUp, // 후속 대화인지 여부
-            question: {
-              content: question.content,
-              options: question.options,
-              answer: question.answer
-            }
-          })
+          body: JSON.stringify({ questionId, teacherMode, modeType, messages, initialContext, isFollowUp, question: { content: question.content, options: question.options, answer: question.answer } })
         });
-
         const data = await response.json();
-
-        if (!response.ok || data.error) {
-          throw new Error(data.error || 'API request failed');
-        }
-
+        if (!response.ok || data.error) throw new Error(data.error || 'API request failed');
         return data.response;
-      } catch (error) {
-        console.error('API Error:', error);
-        throw error;
-      }
+      } catch (error) { console.error('API Error:', error); throw error; }
     }
 
-    // ==================== RENDER FUNCTIONS ====================
-    function renderHomeScreen() {
+    // ==================== BOOK LAYOUT (open book) ====================
+    function bookLayoutHtml(leftContent, rightContent, opts = {}) {
+      const { pageNumLeft = '', pageNumRight = '', leftExtra = '', rightExtra = '' } = opts;
+      const homeBtn = `<button id="btnGoHome" class="font-sans-kr text-ink-faint hover:text-accent transition-colors flex items-center gap-1 text-xs font-medium">${Icons.home} 홈</button>`;
+
+      return `
+      <div class="h-full flex flex-col items-center justify-center p-3 md:p-5">
+        <div class="w-full max-w-[1100px] book-shell relative flex rounded-r-[10px] rounded-l-[4px] flex-1" style="padding:6px 6px 6px 0; background:#1e3a28; max-height:calc(100vh - 50px); min-height:0">
+          <div class="hidden md:block book-spine-bg rounded-l-[4px] relative" style="width:22px; min-width:22px">
+            <div class="spine-gold-line absolute top-[8%] bottom-[8%] left-1/2 w-px opacity-40"></div>
+          </div>
+          <div class="flex-1 flex md:flex-row flex-col bg-paper rounded-r-[6px] md:rounded-l-none relative" style="box-shadow:inset 2px 0 8px rgba(0,0,0,.06); overflow:hidden">
+            <div class="hidden md:block absolute pointer-events-none" style="top:0; bottom:0; left:50%; transform:translateX(-50%); width:50px; z-index:10; background:linear-gradient(90deg, transparent, rgba(30,24,15,.04) 15%, rgba(30,24,15,.09) 35%, rgba(30,24,15,.16) 50%, rgba(30,24,15,.09) 65%, rgba(30,24,15,.04) 85%, transparent)">
+              <div class="absolute" style="top:0; bottom:0; left:50%; width:1px; background:rgba(30,24,15,.1)"></div>
+            </div>
+            <div class="hidden md:block book-edge-right absolute top-1 bottom-1 -right-[3px] w-[3px] rounded-r-sm" style="z-index:-1"></div>
+
+            <!-- Left Page -->
+            <div class="w-full md:w-1/2 flex flex-col page-left-bg relative" style="z-index:5; min-height:0; height:100%">
+              <div class="px-6 md:px-10 pt-4 pb-0 shrink-0">
+                <div class="flex items-center justify-between mb-1">${homeBtn}<div class="font-sans-kr text-ink-faint text-[0.58rem] tracking-[0.12em] text-right">2025 고1 3월 학력평가 · 영어</div></div>
+                <div class="header-line w-full h-px opacity-20 mb-3"></div>
+              </div>
+              <div id="leftPageScroll" class="flex-1 overflow-y-auto book-scroll px-6 md:px-10" style="min-height:0">${leftContent}</div>
+              ${leftExtra}
+              <div class="page-num-bg shrink-0 text-left px-6 md:px-10 py-1.5" style="z-index:3"><span class="font-serif-kr text-ink-faint text-[0.7rem]">${pageNumLeft}</span></div>
+            </div>
+
+            <!-- Right Page -->
+            <div class="w-full md:w-1/2 flex flex-col page-right-bg relative" style="z-index:5; min-height:0; height:100%">
+              <div class="px-6 md:px-10 pt-4 pb-0 shrink-0">
+                <div class="flex items-center justify-end mb-1"><div class="font-sans-kr text-ink-faint text-[0.58rem] tracking-[0.12em]">예비고1 바이블 · 영어편</div></div>
+                <div class="header-line w-full h-px opacity-20 mb-3"></div>
+              </div>
+              <div id="rightPageScroll" class="flex-1 overflow-y-auto book-scroll px-6 md:px-10" style="min-height:0">${rightContent}<div id="messagesEnd"></div></div>
+              ${rightExtra}
+              <div class="page-num-bg shrink-0 text-right px-6 md:px-10 py-1.5" style="z-index:3"><span class="font-serif-kr text-ink-faint text-[0.7rem]">${pageNumRight}</span></div>
+            </div>
+          </div>
+        </div>
+        <div class="mt-1.5 font-sans-kr text-[0.58rem] text-white/25 text-center tracking-wider shrink-0">© 수석의방 · 예비고1 바이블 영어</div>
+      </div>`;
+    }
+
+    // ==================== COVER ====================
+    function renderCoverScreen() {
       const optionsHtml = EXAM_DATA.map(q =>
         `<option value="${q.id}" ${q.id === state.selectedId ? 'selected' : ''}>${q.id}번 - ${q.category.split(' (')[0]}</option>`
       ).join('');
 
       return `
-        <div class="flex flex-col items-center justify-center min-h-screen bg-gradient-to-br from-green-50 to-emerald-50 p-6">
-          <div class="w-full max-w-lg md:max-w-md bg-white rounded-3xl shadow-xl p-6 md:p-8 transform transition-all hover:scale-[1.01]">
-            <div class="text-center mb-8">
-              <div class="w-24 h-24 bg-white rounded-full mx-auto flex items-center justify-center mb-4 shadow-lg ring-4 ring-green-50 overflow-hidden">
-                <img src="${LOGO_URL}" alt="Logo" class="w-full h-full object-cover" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                <div class="hidden items-center justify-center w-full h-full bg-green-100">${Icons.book}</div>
+      <div class="h-full flex flex-col items-center justify-center p-3 md:p-5">
+        <div class="w-full max-w-[570px] book-shell relative flex rounded-r-[10px] rounded-l-[4px] flex-1" style="padding:6px 6px 6px 0; background:#1e3a28; max-height:calc(100vh - 50px); min-height:0">
+          <div class="hidden md:block book-spine-bg rounded-l-[4px] relative" style="width:22px; min-width:22px">
+            <div class="spine-gold-line absolute top-[8%] bottom-[8%] left-1/2 w-px opacity-40"></div>
+          </div>
+          <div class="flex-1 flex flex-col rounded-r-[6px] relative overflow-hidden" style="background: linear-gradient(160deg, #2e3d2a 0%, #23301e 30%, #1e2818 60%, #1a2214 100%)">
+            <div class="hidden md:block book-edge-right absolute top-1 bottom-1 -right-[3px] w-[3px] rounded-r-sm"></div>
+
+            <div class="flex-1 overflow-y-auto book-scroll px-8 md:px-10 py-8 flex flex-col">
+              <!-- Title -->
+              <div class="mb-8">
+                <div class="w-8 h-0.5 mb-5" style="background:#c4a44a;"></div>
+                <p class="font-sans-kr text-[0.68rem] tracking-[0.15em] mb-3" style="color:#c4a44a;">예비고1 바이블 영어편</p>
+                <h1 class="text-[1.6rem] font-bold leading-[1.4] font-serif-kr mb-3" style="color:#f8f3e8;">2025 고1 3월<br>학력평가 영어 해설</h1>
+                <p class="text-[0.82rem] leading-[1.85] mt-4" style="color:rgba(248,243,232,.75); word-break:keep-all;">새로운 시작의 순간,<br>흔들림 없는 기준이 되어줄<br>김수석 선생님의 영어</p>
               </div>
-              <h1 class="text-2xl font-bold text-gray-900 mb-1">김수석 English Teacher</h1>
-              <p class="text-sm text-gray-500">예비고1 바이블 - 영어편</p>
+
+              <!-- Divider -->
+              <div class="w-full h-px mb-6" style="background: linear-gradient(90deg, #c4a44a, rgba(196,164,74,.2));"></div>
+
+              <!-- Controls card -->
+              <div class="bg-paper rounded-lg p-5 space-y-4" style="box-shadow:0 2px 12px rgba(0,0,0,.2);">
+                <div class="space-y-1.5">
+                  <label class="font-sans-kr text-[0.66rem] font-bold text-ink-faint tracking-[0.08em]">1. 문제 선택</label>
+                  <div class="relative">
+                    <select id="questionSelect" class="font-sans-kr w-full appearance-none bg-white border border-paper-edge text-ink py-2.5 pl-3.5 pr-8 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent text-[0.82rem] font-medium cursor-pointer hover:border-accent transition-colors" style="box-shadow:0 1px 3px rgba(0,0,0,.04)">${optionsHtml}</select>
+                    <div class="absolute right-2.5 top-1/2 -translate-y-1/2 text-ink-faint pointer-events-none">${Icons.chevronDown}</div>
+                  </div>
+                </div>
+
+                <div class="space-y-1.5">
+                  <label class="font-sans-kr text-[0.66rem] font-bold text-ink-faint tracking-[0.08em]">2. 선생님 선택</label>
+                  <div class="flex gap-2">
+                    <button id="btnKorean" class="flex-1 py-2 rounded-lg border transition-all flex flex-col items-center gap-0.5 ${state.teacherMode === 'korean' ? 'border-accent bg-white text-accent' : 'border-paper-edge bg-white text-ink-faint hover:border-accent'}" style="box-shadow:${state.teacherMode === 'korean' ? '0 2px 8px rgba(61,122,74,.15)' : '0 1px 2px rgba(0,0,0,.04)'}">
+                      <span class="text-base">🇰🇷</span><span class="font-sans-kr text-[0.64rem] font-bold">Korean</span>
+                    </button>
+                    <button id="btnNative" class="flex-1 py-2 rounded-lg border transition-all flex flex-col items-center gap-0.5 ${state.teacherMode === 'native' ? 'border-accent bg-white text-accent' : 'border-paper-edge bg-white text-ink-faint hover:border-accent'}" style="box-shadow:${state.teacherMode === 'native' ? '0 2px 8px rgba(61,122,74,.15)' : '0 1px 2px rgba(0,0,0,.04)'}">
+                      <span class="text-base">🇺🇸</span><span class="font-sans-kr text-[0.64rem] font-bold">Native</span>
+                    </button>
+                  </div>
+                </div>
+
+                <div class="space-y-2 pt-1">
+                  <label class="font-sans-kr text-[0.66rem] font-bold text-ink-faint tracking-[0.08em]">3. 학습 모드</label>
+                  <button id="btnReading" class="w-full bg-accent text-white py-2.5 rounded-lg font-sans-kr font-medium hover:bg-cover transition-colors flex items-center justify-center gap-2 text-sm" style="box-shadow:0 2px 8px rgba(61,122,74,.2)">
+                    ${Icons.brain} Deep Reading <span class="text-[0.6rem] px-1.5 py-0.5 rounded" style="background:rgba(255,255,255,.15)">해설 강의</span>
+                  </button>
+                  <button id="btnEssay" class="w-full bg-white border border-paper-edge text-accent py-2.5 rounded-lg font-sans-kr font-medium hover:border-accent transition-colors flex items-center justify-center gap-2 text-sm" style="box-shadow:0 1px 3px rgba(0,0,0,.04)">
+                    ${Icons.pen} Discussion <span class="text-[0.6rem] bg-accent/5 px-1.5 py-0.5 rounded text-accent">논술 토론</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="flex-1"></div>
             </div>
 
-            <div class="space-y-6">
-              <!-- Question Select -->
-              <div class="space-y-2">
-                <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider ml-1">1. 문제 선택</label>
-                <div class="relative">
-                  <select id="questionSelect" class="w-full appearance-none bg-gray-50 border border-gray-200 text-gray-800 py-3 pl-4 pr-10 rounded-xl focus:outline-none focus:ring-2 focus:ring-green-500 font-medium cursor-pointer hover:border-green-400 transition-colors">
-                    ${optionsHtml}
-                  </select>
-                  <div class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none rotate-90">${Icons.chevronDown}</div>
-                </div>
-              </div>
-
-              <!-- Teacher Select -->
-              <div class="space-y-2">
-                <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider ml-1">2. 선생님 선택</label>
-                <div class="flex gap-3">
-                  <button id="btnKorean" class="flex-1 py-3 rounded-xl border-2 transition-all flex flex-col items-center justify-center gap-1 ${state.teacherMode === 'korean' ? 'border-green-600 bg-green-50 text-green-700 shadow-md' : 'border-gray-100 bg-gray-50 text-gray-400 hover:bg-gray-100'}">
-                    <span class="text-xl">🇰🇷</span>
-                    <span class="text-xs font-bold">Korean Teacher</span>
-                  </button>
-                  <button id="btnNative" class="flex-1 py-3 rounded-xl border-2 transition-all flex flex-col items-center justify-center gap-1 ${state.teacherMode === 'native' ? 'border-green-600 bg-green-50 text-green-700 shadow-md' : 'border-gray-100 bg-gray-50 text-gray-400 hover:bg-gray-100'}">
-                    <span class="text-xl">🇺🇸</span>
-                    <span class="text-xs font-bold">Native Teacher</span>
-                  </button>
-                </div>
-              </div>
-
-              <!-- Action Buttons -->
-              <div class="space-y-3 pt-2">
-                <label class="text-xs font-semibold text-gray-500 uppercase tracking-wider ml-1">3. 학습 모드 선택</label>
-                <button id="btnReading" class="w-full bg-green-600 text-white font-bold text-lg py-4 rounded-xl shadow-lg hover:bg-green-700 hover:shadow-xl transition-all flex items-center justify-center gap-3 group">
-                  <span class="text-green-200">${Icons.brain}</span>
-                  <span>Deep Reading</span>
-                  <span class="text-xs bg-green-500 px-2 py-0.5 rounded text-green-100">해설 강의</span>
-                </button>
-                
-                <button id="btnEssay" class="w-full bg-white border-2 border-green-100 text-green-600 font-bold text-lg py-4 rounded-xl shadow-sm hover:border-green-300 hover:shadow-md transition-all flex items-center justify-center gap-3 group">
-                  <span>${Icons.pen}</span>
-                  <span>Discussion</span>
-                  <span class="text-xs bg-green-50 px-2 py-0.5 rounded text-green-600">논술 토론</span>
-                </button>
-              </div>
+            <div class="shrink-0 px-8 md:px-10 py-1.5" style="background:linear-gradient(transparent, rgba(26,37,22,.5) 40%);">
             </div>
           </div>
         </div>
-      `;
+        <div class="mt-1.5 font-sans-kr text-[0.58rem] text-white/25 text-center tracking-wider shrink-0">© 수석의방 · 예비고1 바이블 영어</div>
+      </div>`;
     }
 
+    // ==================== ESSAY INPUT ====================
     function renderEssayInputScreen() {
       const question = getQuestion(state.selectedId);
-
-      return `
-        <div class="flex flex-col h-screen bg-gray-50 overflow-hidden">
-          <!-- Header -->
-          <div class="bg-white shadow-sm px-6 py-4 flex items-center justify-between z-10 border-b border-gray-200">
-            <button id="btnBack" class="flex items-center gap-2 text-gray-500 hover:text-green-600 transition-colors">
-              ${Icons.arrowLeft}
-            </button>
-            <div class="text-center font-bold text-gray-800 text-lg flex items-center gap-2">
-              <span class="text-green-600">${Icons.pen}</span>
-              <span>Essay Preparation</span>
-            </div>
-            <div class="w-20"></div>
+      const leftContent = `
+        <div class="pb-4">
+          <div class="flex items-center gap-3 mb-4">
+            <h2 class="font-bold text-lg text-ink font-serif-kr">${question.id}번</h2>
+            <span class="font-sans-kr text-[0.68rem] font-medium px-2 py-0.5 rounded" style="background:rgba(74,158,92,.1); color:#3d7a4a; border:1px solid rgba(74,158,92,.2)">${question.category.split(' (')[0]}</span>
           </div>
-
-          <div class="flex-1 overflow-y-auto p-6 md:p-8 max-w-4xl mx-auto w-full">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 mb-6">
-              <h3 class="font-bold text-green-700 mb-2 flex items-center gap-2">
-                ${Icons.book}
-                Question ${question.id} Context
-              </h3>
-              <p class="text-gray-600 text-sm leading-relaxed whitespace-pre-wrap max-h-40 overflow-y-auto bg-gray-50 p-3 rounded-lg">${escapeHtml(question.content)}</p>
-            </div>
-
-            <div class="space-y-6">
-              <!-- Korean Input -->
-              <div class="flex flex-col gap-2">
-                <label class="font-semibold text-gray-700 flex items-center gap-2">
-                  <span class="bg-green-100 text-green-700 w-6 h-6 rounded-full flex items-center justify-center text-xs">1</span>
-                  글의 전반적인 내용 이해 (한국어)
-                </label>
-                <textarea id="koreanInput" class="w-full h-32 p-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all shadow-sm break-words whitespace-pre-wrap" placeholder="이 지문은 어떤 이야기를 담고 있나요?"></textarea>
-              </div>
-
-              <!-- English Input -->
-              <div class="flex flex-col gap-2">
-                <label class="font-semibold text-gray-700 flex items-center gap-2">
-                  <span class="bg-green-100 text-green-700 w-6 h-6 rounded-full flex items-center justify-center text-xs">2</span>
-                  본문 요약 (English Summary)
-                </label>
-                <textarea id="englishInput" class="w-full h-32 p-4 rounded-xl border border-gray-300 focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all shadow-sm font-sans break-words whitespace-pre-wrap" placeholder="Summarize the text in English..."></textarea>
-              </div>
-
-              <button id="btnStartChat" class="w-full bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold py-4 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2">
-                ${Icons.message}
-                선생님과 대화 시작하기 (${state.teacherMode === 'native' ? 'Native' : 'Korean'})
-              </button>
-            </div>
+          <div class="bg-white p-4 rounded-lg border border-paper-edge" style="box-shadow:0 1px 3px rgba(0,0,0,.03)">
+            <p class="text-ink text-[0.8rem] leading-[1.85] whitespace-pre-wrap font-serif-kr" style="word-break:keep-all;">${escapeHtml(question.content)}</p>
           </div>
-        </div>
-      `;
+        </div>`;
+
+      const rightContent = `
+        <div class="pb-4 space-y-5">
+          <div class="flex flex-col gap-2">
+            <label class="font-sans-kr font-bold text-ink text-[0.82rem] flex items-center gap-2">
+              <span class="bg-accent text-white w-5 h-5 rounded-full flex items-center justify-center text-[0.6rem]">1</span>
+              글의 전반적인 내용 이해 (한국어)
+            </label>
+            <textarea id="koreanInput" class="font-sans-kr w-full h-28 p-3.5 rounded-lg border border-paper-edge focus:ring-2 focus:ring-accent focus:border-accent transition-all text-[0.82rem] bg-white text-ink" style="box-shadow:0 1px 3px rgba(0,0,0,.03); resize:none;" placeholder="이 지문은 어떤 이야기를 담고 있나요?"></textarea>
+          </div>
+          <div class="flex flex-col gap-2">
+            <label class="font-sans-kr font-bold text-ink text-[0.82rem] flex items-center gap-2">
+              <span class="bg-accent text-white w-5 h-5 rounded-full flex items-center justify-center text-[0.6rem]">2</span>
+              본문 요약 (English Summary)
+            </label>
+            <textarea id="englishInput" class="font-sans-kr w-full h-28 p-3.5 rounded-lg border border-paper-edge focus:ring-2 focus:ring-accent focus:border-accent transition-all text-[0.82rem] bg-white text-ink" style="box-shadow:0 1px 3px rgba(0,0,0,.03); resize:none;" placeholder="Summarize the text in English..."></textarea>
+          </div>
+          <button id="btnStartChat" class="w-full bg-accent text-white font-bold py-3 rounded-lg font-sans-kr hover:bg-cover transition-colors flex items-center justify-center gap-2 text-sm" style="box-shadow:0 2px 8px rgba(61,122,74,.2)">
+            ${Icons.send} 선생님과 대화 시작하기
+          </button>
+        </div>`;
+
+      return bookLayoutHtml(leftContent, rightContent, { pageNumLeft: 3, pageNumRight: 4 });
     }
 
-    function renderChatMessage(msg) {
+    // ==================== CHAT MESSAGES ====================
+    function renderChatMessage(msg, isLast) {
       const isUser = msg.role === 'user';
       const safeText = typeof msg.text === 'string' ? msg.text : '';
+      const animCls = isLast ? 'animate-fade-in' : '';
 
-      // 선생님 아바타: 이미지 우선, 에러 시 fallback
-      const teacherAvatar = `
-        <div class="w-10 h-10 rounded-full flex-shrink-0 shadow-lg ring-2 ring-white overflow-hidden bg-white">
-          <img 
-            src="${LOGO_URL}" 
-            alt="Teacher" 
-            class="w-full h-full object-cover"
-            onerror="this.onerror=null; this.parentElement.style.background='linear-gradient(135deg, #22c55e, #10b981)'; this.parentElement.innerHTML='<span style=\\'color:white;display:flex;align-items:center;justify-content:center;width:100%;height:100%;\\'>✨</span>';"
-          >
-        </div>
-      `;
-
-      // 학생 아바타
-      const studentAvatar = `
-        <div class="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 shadow-lg ring-2 ring-white bg-green-600">
-          <span class="text-white">${Icons.graduationCap}</span>
-        </div>
-      `;
-
-      return `
-        <div class="flex w-full mb-6 ${isUser ? 'justify-end' : 'justify-start'} animate-fadeIn">
-          <div class="flex flex-col max-w-[95%] md:max-w-[85%] ${isUser ? 'items-end' : 'items-start'}">
-            <div class="flex ${isUser ? 'flex-row-reverse' : 'flex-row'} items-start gap-2 md:gap-3">
-              ${isUser ? studentAvatar : teacherAvatar}
-              
-              <div class="p-3.5 md:p-5 rounded-2xl shadow-md break-words ${isUser
-          ? 'bg-green-600 text-white rounded-tr-none'
-          : msg.isError
-            ? 'bg-red-50 text-red-600 border border-red-200 rounded-tl-none'
-            : 'bg-white text-gray-800 border border-gray-100 rounded-tl-none'
-        }">
-                ${isUser
-          ? `<div class="whitespace-pre-wrap leading-relaxed text-sm md:text-base">${escapeHtml(safeText)}</div>`
-          : `<div class="font-sans text-sm md:text-base">${renderFormattedText(safeText)}</div>`
-        }
-              </div>
-            </div>
-          </div>
-        </div>
-      `;
+      if (isUser) {
+        return `<div class="flex w-full mb-4 justify-end ${animCls}"><div class="max-w-[90%]"><div class="chat-msg-user p-3.5 rounded-lg rounded-tr-none" style="box-shadow:0 1px 3px rgba(0,0,0,.04)"><div class="whitespace-pre-wrap leading-[1.85] text-[0.82rem] text-ink font-sans-kr">${escapeHtml(safeText)}</div></div></div></div>`;
+      }
+      return `<div class="flex w-full mb-4 justify-start ${animCls}"><div class="max-w-[95%]"><div class="flex items-start gap-2.5"><img src="${LOGO_URL}" alt="T" class="w-8 h-8 shrink-0 rounded-full border border-paper-edge bg-white" style="box-shadow:0 1px 3px rgba(0,0,0,.08)" onerror="this.style.display='none';"><div class="flex-1 min-w-0"><div class="${msg.isError ? 'bg-white border border-red-soft/20 text-red-soft' : 'teacher-box'} p-3.5 rounded-lg rounded-tl-none" style="box-shadow:0 1px 3px rgba(0,0,0,.04)"><div class="font-sans-kr text-[0.82rem]">${renderFormattedText(safeText)}</div></div></div></div></div></div>`;
     }
 
+    function getMessagesHtml() {
+      let html = '';
+      const total = state.messages.length;
+      state.messages.forEach((msg, i) => { html += renderChatMessage(msg, i === total - 1); });
+      return html;
+    }
+
+    // ==================== CHAT SCREEN ====================
     function renderChatScreen() {
       const question = getQuestion(state.selectedId);
+      const isReading = state.modeType === 'reading';
 
-      const messagesHtml = state.messages.map(msg => renderChatMessage(msg)).join('');
+      // === LEFT PAGE ===
+      let leftContent = `
+        <div class="pb-4">
+          <div class="flex items-center gap-3 mb-4">
+            <h2 class="font-bold text-lg text-ink font-serif-kr">${question.id}번</h2>
+            <span class="font-sans-kr text-[0.68rem] font-medium px-2 py-0.5 rounded" style="background:rgba(74,158,92,.1); color:#3d7a4a; border:1px solid rgba(74,158,92,.2)">${question.category.split(' (')[0]}</span>
+            <span class="font-sans-kr text-[0.6rem] font-medium px-1.5 py-0.5 rounded" style="background:rgba(196,164,74,.1); color:#8a7432; border:1px solid rgba(196,164,74,.2)">${state.teacherMode === 'native' ? 'Native' : 'Korean'}</span>
+          </div>
+          <div class="bg-white p-4 rounded-lg border border-paper-edge" style="box-shadow:0 1px 3px rgba(0,0,0,.03)">
+            <p class="text-ink text-[0.78rem] leading-[1.85] whitespace-pre-wrap font-serif-kr" style="word-break:keep-all;">${escapeHtml(question.content)}</p>
+          </div>
+          ${question.options && state.modeType !== 'essay' ? `<div class="mt-6 space-y-1.5">${question.prompt ? `<div class="font-sans-kr text-[0.78rem] font-medium text-ink mb-2">${escapeHtml(question.prompt)}</div>` : ''}${question.options.map(opt => `<div class="font-sans-kr text-[0.74rem] text-ink-light leading-relaxed pl-1">${escapeHtml(opt)}</div>`).join('')}</div>` : ''}
+        </div>`;
 
-      const loadingHtml = state.isLoading && state.messages.length === 0
-        ? `<div class="flex flex-col items-center justify-center h-full text-gray-400 gap-4">
-             <div class="w-20 h-20 rounded-full bg-white shadow-lg flex items-center justify-center overflow-hidden ring-4 ring-green-100">
-               <img src="${LOGO_URL}" alt="Teacher" class="w-full h-full object-cover animate-pulse" onerror="this.style.display='none';">
-             </div>
-             <p class="text-sm font-medium animate-pulse">선생님이 내용을 분석 중입니다...</p>
-           </div>`
-        : '';
+      // Left extra: answer input or result (reading mode only)
+      let leftExtra = '';
+      if (isReading && !state.answerSubmitted) {
+        leftExtra = `
+        <div class="answer-bar shrink-0 px-6 md:px-10 py-3" style="z-index:6">
+          <div class="flex items-center gap-2 justify-center">
+            <span class="font-sans-kr text-ink-faint text-[0.74rem] font-medium shrink-0">정답 입력:</span>
+            <div class="flex items-center bg-white rounded-lg border" style="border-color:rgba(44,36,22,.12); box-shadow:0 1px 3px rgba(0,0,0,.04)">
+              <input type="number" min="1" max="5" id="answerInput" placeholder="1~5" class="w-14 p-2 text-center outline-none font-bold text-ink text-sm bg-transparent font-serif-kr" autocomplete="off">
+            </div>
+            <button id="btnSubmitAnswer" class="bg-accent text-white px-4 py-2 rounded-lg font-sans-kr font-medium text-[0.78rem] hover:bg-cover transition-colors" style="box-shadow:0 2px 6px rgba(61,122,74,.2)">채점하기</button>
+          </div>
+        </div>`;
+      } else if (isReading && state.answerSubmitted) {
+        const isCorrect = state.userAnswer === question.answer;
+        leftExtra = `
+        <div class="answer-bar shrink-0 px-6 md:px-10 py-2.5" style="z-index:6">
+          <div class="flex items-center justify-center gap-2.5">
+            <span class="flex items-center gap-1 font-sans-kr text-[0.8rem] font-bold ${isCorrect ? 'text-accent' : 'text-red-soft'}">
+              ${isCorrect ? Icons.check : Icons.x} ${isCorrect ? '정답!' : '오답'}
+            </span>
+            <span class="font-sans-kr text-[0.74rem] text-ink-faint">제출: ${state.userAnswer}번 / 정답: ${question.answer}번</span>
+          </div>
+        </div>`;
+      }
 
-      const typingIndicator = state.isLoading && state.messages.length > 0
-        ? `<div class="flex w-full mb-6 justify-start animate-fadeIn">
-             <div class="flex items-center gap-3">
-               <div class="w-10 h-10 rounded-full flex-shrink-0 overflow-hidden bg-white shadow-lg ring-2 ring-white">
-                 <img src="${LOGO_URL}" alt="Teacher" class="w-full h-full object-cover animate-pulse" onerror="this.style.display='none';">
-               </div>
-               <div class="h-10 bg-white border border-gray-100 rounded-2xl w-24 flex items-center justify-center shadow-sm">
-                 <span class="text-gray-400 animate-pulse">${Icons.dots}</span>
-               </div>
-             </div>
-           </div>`
-        : '';
+      // === RIGHT PAGE ===
+      let rightContent = '';
+      if (isReading && !state.answerSubmitted) {
+        // Waiting state
+        rightContent = `
+        <div class="flex flex-col items-center justify-center h-full text-ink-faint gap-4 py-10">
+          <div class="w-16 h-16 rounded-full overflow-hidden border border-paper-edge bg-white opacity-30" style="box-shadow:0 1px 4px rgba(0,0,0,.06)">
+            <img src="${LOGO_URL}" alt="" class="w-full h-full object-cover" onerror="this.style.display='none';">
+          </div>
+          <div class="text-center">
+            <p class="font-sans-kr text-[0.8rem] font-medium text-ink-faint mb-1">문제를 먼저 풀어보세요</p>
+            <p class="font-sans-kr text-[0.68rem] text-ink-faint/60">왼쪽 페이지 하단에 답을 입력해주세요</p>
+          </div>
+        </div>`;
+      } else {
+        // Chat messages
+        const messagesHtml = getMessagesHtml();
 
-      return `
-        <div class="flex flex-col h-screen bg-gray-100">
-          <!-- Header -->
-          <div class="bg-white shadow-sm px-4 md:px-6 py-4 flex items-center justify-between z-10 border-b border-gray-200">
-            <button id="btnBack" class="flex items-center gap-2 text-gray-500 hover:text-green-600 transition-colors group">
-              <div class="p-2 rounded-full group-hover:bg-green-50 transition-colors">${Icons.arrowLeft}</div>
-              <span class="text-sm font-medium hidden md:inline">나가기</span>
+        // Loading indicator
+        const typingHtml = state.isLoading
+          ? `<div class="flex w-full mb-4 justify-start animate-fade-in"><div class="flex items-center gap-2.5"><img src="${LOGO_URL}" alt="T" class="w-8 h-8 shrink-0 rounded-full border border-paper-edge bg-white animate-pulse" style="box-shadow:0 1px 3px rgba(0,0,0,.08)" onerror="this.style.display='none';"><div class="h-9 bg-white border border-paper-edge rounded-lg w-20 flex items-center justify-center" style="box-shadow:0 1px 3px rgba(0,0,0,.04)"><span class="text-ink-faint animate-pulse">${Icons.dots}</span></div></div></div>`
+          : '';
+
+        // "다음 문제" button (reading mode only, after AI has responded)
+        let nextBtnHtml = '';
+        if (isReading && state.answerSubmitted && !state.isLoading && state.messages.length > 0) {
+          const currentIdx = EXAM_DATA.findIndex(q => q.id === state.selectedId);
+          const hasNext = currentIdx < EXAM_DATA.length - 1;
+          const nextQ = hasNext ? EXAM_DATA[currentIdx + 1] : null;
+          nextBtnHtml = `
+          <div class="mt-5 mb-4 pt-4" style="border-top:1px solid rgba(44,36,22,.08)">
+            <button id="btnNextQuestion" class="w-full ${hasNext ? 'bg-accent hover:bg-cover' : 'bg-ink-faint/50 hover:bg-ink-faint/70'} text-white py-3 rounded-lg font-sans-kr font-medium transition-colors flex items-center justify-center gap-2 text-sm" style="box-shadow:0 2px 8px rgba(61,122,74,.2)">
+              ${hasNext ? `다음 문제 풀어볼까? (${nextQ.id}번) →` : '모든 문제를 풀었어! 처음으로 →'}
             </button>
-            <div class="text-center absolute left-1/2 transform -translate-x-1/2">
-              <h2 class="font-bold text-lg text-gray-800 flex items-center gap-2 justify-center">
-                <div class="w-6 h-6 overflow-hidden flex items-center justify-center">
-                  <img src="${LOGO_URL}" alt="Logo" class="w-full h-full object-contain" onerror="this.style.display='none';">
-                </div>
-                ${state.modeType === 'reading' ? 'Deep Reading' : 'Discussion'}
-              </h2>
-              <span class="text-[10px] font-medium text-green-600 bg-green-50 px-2 py-0.5 rounded-full mt-1 inline-block">
-                ${question.id}번 • ${state.teacherMode === 'native' ? 'Native Teacher' : 'Korean Teacher'}
-              </span>
-            </div>
-            <div class="w-16 md:w-32"></div>
-          </div>
+          </div>`;
+        }
 
-          <!-- Messages -->
-          <div id="messagesContainer" class="flex-1 overflow-y-auto p-3 md:p-6 space-y-4 bg-gray-50/50 scrollbar-hide">
-            ${loadingHtml}
-            ${messagesHtml}
-            ${typingIndicator}
-            <div id="messagesEnd"></div>
-          </div>
+        rightContent = messagesHtml + typingHtml + nextBtnHtml;
+      }
 
-          <!-- Input -->
-          <div class="bg-white p-4 border-t border-gray-200">
-            <div class="max-w-4xl mx-auto relative flex items-center">
-              <input
-                type="text"
-                id="chatInput"
-                placeholder="${getPlaceholderText()}"
-                ${state.isLoading ? 'disabled' : ''}
-                class="w-full bg-gray-100 text-gray-900 placeholder-gray-400 border-0 rounded-full py-3 pl-5 pr-14 focus:ring-2 focus:ring-green-500 focus:bg-white transition-all shadow-inner"
-              />
-              <button id="btnSend" ${state.isLoading ? 'disabled' : ''} class="absolute right-2 p-2 bg-green-600 text-white rounded-full hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-md active:scale-95">
-                ${Icons.send}
-              </button>
-            </div>
+      // Right extra: chat input (only when answer submitted for reading, or always for essay)
+      let rightExtra = '';
+      if (!isReading || state.answerSubmitted) {
+        rightExtra = `
+        <div class="chat-input-bar shrink-0 px-4 md:px-8 py-2.5" style="z-index:6">
+          <div class="flex items-center gap-2 w-full bg-white p-2 pl-3.5 rounded-full border font-sans-kr" style="border-color:rgba(44,36,22,.12); box-shadow:0 1px 3px rgba(0,0,0,.04)">
+            <input type="text" id="chatInput" placeholder="${getPlaceholderText()}" ${state.isLoading ? 'disabled' : ''} class="flex-1 bg-transparent py-1 outline-none text-ink font-medium placeholder:text-ink-faint text-[0.8rem] font-sans-kr">
+            <button id="btnSend" ${state.isLoading ? 'disabled' : ''} class="bg-accent text-white p-2 rounded-full hover:bg-cover disabled:opacity-40 transition-colors flex items-center justify-center shrink-0">${Icons.send}</button>
           </div>
-        </div>
-      `;
+        </div>`;
+      }
+
+      return bookLayoutHtml(leftContent, rightContent, {
+        pageNumLeft: 3, pageNumRight: 4,
+        leftExtra, rightExtra
+      });
     }
 
-    // ==================== EVENT HANDLERS ====================
-    function attachHomeEvents() {
-      document.getElementById('questionSelect')?.addEventListener('change', (e) => {
-        state.selectedId = parseInt(e.target.value);
-      });
-
-      document.getElementById('btnKorean')?.addEventListener('click', () => {
-        state.teacherMode = 'korean';
-        render();
-      });
-
-      document.getElementById('btnNative')?.addEventListener('click', () => {
-        state.teacherMode = 'native';
-        render();
-      });
-
+    // ==================== EVENT ATTACHMENT ====================
+    function attachCoverEvents() {
+      document.getElementById('questionSelect')?.addEventListener('change', (e) => { state.selectedId = parseInt(e.target.value); });
+      document.getElementById('btnKorean')?.addEventListener('click', () => { state.teacherMode = 'korean'; render(); });
+      document.getElementById('btnNative')?.addEventListener('click', () => { state.teacherMode = 'native'; render(); });
       document.getElementById('btnReading')?.addEventListener('click', () => {
         state.modeType = 'reading';
         state.messages = [];
+        state.userAnswer = null;
+        state.answerSubmitted = false;
         state.view = 'chat';
         render();
-        startChatSession();
       });
-
       document.getElementById('btnEssay')?.addEventListener('click', () => {
         state.modeType = 'essay';
         state.view = 'essay-input';
@@ -486,20 +612,11 @@
     }
 
     function attachEssayInputEvents() {
-      document.getElementById('btnBack')?.addEventListener('click', () => {
-        state.view = 'home';
-        render();
-      });
-
+      document.getElementById('btnGoHome')?.addEventListener('click', goHome);
       document.getElementById('btnStartChat')?.addEventListener('click', () => {
-        const korean = document.getElementById('koreanInput').value.trim();
-        const english = document.getElementById('englishInput').value.trim();
-
-        if (!korean || !english) {
-          alert('두 칸을 모두 채워주세요!');
-          return;
-        }
-
+        const korean = document.getElementById('koreanInput')?.value.trim();
+        const english = document.getElementById('englishInput')?.value.trim();
+        if (!korean || !english) { alert('두 칸을 모두 채워주세요!'); return; }
         state.essayInputs = { korean, english };
         state.messages = [];
         state.view = 'chat';
@@ -509,93 +626,154 @@
     }
 
     function attachChatEvents() {
-      document.getElementById('btnBack')?.addEventListener('click', () => {
-        state.view = 'home';
-        state.messages = [];
-        state.essayInputs = null;
-        render();
-      });
+      document.getElementById('btnGoHome')?.addEventListener('click', goHome);
+      // Answer submission (reading mode)
+      document.getElementById('btnSubmitAnswer')?.addEventListener('click', submitAnswer);
+      document.getElementById('answerInput')?.addEventListener('keydown', (e) => { if (e.key === 'Enter') submitAnswer(); });
+      // Chat send
+      document.getElementById('btnSend')?.addEventListener('click', sendMessage);
+      document.getElementById('chatInput')?.addEventListener('keydown', (e) => { if (e.key === 'Enter') sendMessage(); });
+      // Next question
+      document.getElementById('btnNextQuestion')?.addEventListener('click', goToNextQuestion);
+    }
 
-      const chatInput = document.getElementById('chatInput');
-      const btnSend = document.getElementById('btnSend');
+    // ==================== ACTIONS ====================
+    function goHome() {
+      state.view = 'cover';
+      state.messages = [];
+      state.essayInputs = null;
+      state.userAnswer = null;
+      state.answerSubmitted = false;
+      state.isLoading = false;
+      render();
+    }
 
-      btnSend?.addEventListener('click', sendMessage);
-      chatInput?.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') sendMessage();
-      });
+    async function submitAnswer() {
+      const input = document.getElementById('answerInput');
+      if (!input) return;
+      const val = parseInt(input.value.trim());
+      if (isNaN(val) || val < 1 || val > 5 || state.isLoading) return;
 
-      scrollToBottom();
+      state.userAnswer = val;
+      state.answerSubmitted = true;
+      state.isLoading = true;
+      msgCount = 0;
+      render();
+
+      try {
+        const response = await callChatAPI(state.selectedId, state.teacherMode, 'reading', [], null, false);
+        state.messages.push({ role: 'model', text: response });
+      } catch (error) {
+        state.messages.push({ role: 'model', text: `Error: ${error.message}`, isError: true });
+      }
+      state.isLoading = false;
+      updateRightPage();
     }
 
     async function sendMessage() {
       const chatInput = document.getElementById('chatInput');
+      if (!chatInput) return;
       const text = chatInput.value.trim();
-
       if (!text || state.isLoading) return;
 
       chatInput.value = '';
       state.messages.push({ role: 'user', text });
       state.isLoading = true;
-      render();
+      updateRightPage();
 
       try {
-        // 전체 대화 이력 전송 (새 사용자 메시지 포함)
-        const response = await callChatAPI(
-          state.selectedId,
-          state.teacherMode,
-          state.modeType,
-          state.messages, // 전체 메시지 전송
-          null, // No initial context for follow-up messages
-          true  // isFollowUp flag
-        );
-
+        const response = await callChatAPI(state.selectedId, state.teacherMode, state.modeType, state.messages, null, true);
         state.messages.push({ role: 'model', text: response });
       } catch (error) {
         state.messages.push({ role: 'model', text: `Error: ${error.message}`, isError: true });
       }
-
       state.isLoading = false;
-      render();
+      updateRightPage();
     }
 
     async function startChatSession() {
       state.isLoading = true;
-      render();
+      updateRightPage();
 
       try {
-        const response = await callChatAPI(
-          state.selectedId,
-          state.teacherMode,
-          state.modeType,
-          [],
-          state.essayInputs,
-          false // isFollowUp flag - 초기 세션
-        );
-
+        const response = await callChatAPI(state.selectedId, state.teacherMode, state.modeType, [], state.essayInputs, false);
         state.messages.push({ role: 'model', text: response });
       } catch (error) {
         state.messages.push({ role: 'model', text: `Error: ${error.message}`, isError: true });
       }
-
       state.isLoading = false;
-      render();
+      updateRightPage();
+    }
+
+    function goToNextQuestion() {
+      const currentIdx = EXAM_DATA.findIndex(q => q.id === state.selectedId);
+      if (currentIdx < EXAM_DATA.length - 1) {
+        state.selectedId = EXAM_DATA[currentIdx + 1].id;
+        state.userAnswer = null;
+        state.answerSubmitted = false;
+        state.messages = [];
+        state.isLoading = false;
+        msgCount = 0;
+        render();
+      } else {
+        goHome();
+      }
+    }
+
+    // ==================== PARTIAL RIGHT PAGE UPDATE ====================
+    function updateRightPage() {
+      const container = document.getElementById('rightPageScroll');
+      if (!container) { render(); return; }
+
+      const isReading = state.modeType === 'reading';
+
+      // Build right page inner HTML
+      const messagesHtml = getMessagesHtml();
+      const typingHtml = state.isLoading
+        ? `<div class="flex w-full mb-4 justify-start animate-fade-in"><div class="flex items-center gap-2.5"><img src="${LOGO_URL}" alt="T" class="w-8 h-8 shrink-0 rounded-full border border-paper-edge bg-white animate-pulse" style="box-shadow:0 1px 3px rgba(0,0,0,.08)" onerror="this.style.display='none';"><div class="h-9 bg-white border border-paper-edge rounded-lg w-20 flex items-center justify-center" style="box-shadow:0 1px 3px rgba(0,0,0,.04)"><span class="text-ink-faint animate-pulse">${Icons.dots}</span></div></div></div>`
+        : '';
+
+      let nextBtnHtml = '';
+      if (isReading && state.answerSubmitted && !state.isLoading && state.messages.length > 0) {
+        const currentIdx = EXAM_DATA.findIndex(q => q.id === state.selectedId);
+        const hasNext = currentIdx < EXAM_DATA.length - 1;
+        const nextQ = hasNext ? EXAM_DATA[currentIdx + 1] : null;
+        nextBtnHtml = `<div class="mt-5 mb-4 pt-4" style="border-top:1px solid rgba(44,36,22,.08)"><button id="btnNextQuestion" class="w-full ${hasNext ? 'bg-accent hover:bg-cover' : 'bg-ink-faint/50 hover:bg-ink-faint/70'} text-white py-3 rounded-lg font-sans-kr font-medium transition-colors flex items-center justify-center gap-2 text-sm" style="box-shadow:0 2px 8px rgba(61,122,74,.2)">${hasNext ? `다음 문제 풀어볼까? (${nextQ.id}번) →` : '모든 문제를 풀었어! 처음으로 →'}</button></div>`;
+      }
+
+      container.innerHTML = messagesHtml + typingHtml + nextBtnHtml + '<div id="messagesEnd"></div>';
+
+      // Update input state
+      const chatInput = document.getElementById('chatInput');
+      const btnSend = document.getElementById('btnSend');
+      if (chatInput) chatInput.disabled = state.isLoading;
+      if (btnSend) btnSend.disabled = state.isLoading;
+
+      // Re-attach next question button
+      document.getElementById('btnNextQuestion')?.addEventListener('click', goToNextQuestion);
+
+      scrollToBottom();
     }
 
     function scrollToBottom() {
-      setTimeout(() => {
+      requestAnimationFrame(() => {
         const end = document.getElementById('messagesEnd');
         end?.scrollIntoView({ behavior: 'smooth' });
-      }, 100);
+      });
     }
 
     // ==================== MAIN RENDER ====================
     function render() {
       const app = document.getElementById('app');
 
+      // Save scroll positions if staying in same view
+      const leftEl = document.getElementById('leftPageScroll');
+      const savedLeftScroll = leftEl ? leftEl.scrollTop : 0;
+
       switch (state.view) {
-        case 'home':
-          app.innerHTML = renderHomeScreen();
-          attachHomeEvents();
+        case 'cover':
+          app.innerHTML = renderCoverScreen();
+          attachCoverEvents();
           break;
         case 'essay-input':
           app.innerHTML = renderEssayInputScreen();
@@ -604,8 +782,15 @@
         case 'chat':
           app.innerHTML = renderChatScreen();
           attachChatEvents();
+          // Restore left scroll if same view
+          if (lastView === 'chat') {
+            const newLeftEl = document.getElementById('leftPageScroll');
+            if (newLeftEl) newLeftEl.scrollTop = savedLeftScroll;
+          }
+          scrollToBottom();
           break;
       }
+      lastView = state.view;
     }
 
     // ==================== INIT ====================
